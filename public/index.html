@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles/general.css" />
+    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="shortcut icon" href="#" />
+
+    <title>Calendar App</title>
+  </head>
+  <body>
+    <nav>
+      <p class="nav__logo">
+        <i class="nav__logo_image fa-solid fa-calendar"></i>
+        <span class="nav__logo__text">Calendar</span>
+      </p>
+
+      <button class="button button--primary nav__today">Today</button>
+
+      <div class="nav__movement">
+        <button class="button nav__movement_left">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="button nav__movement_right">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <p class="nav__current-date">Juli 2022</p>
+    </nav>
+
+    <main id="calendar-table" class="week">
+      <div id="calendar__header"></div>
+      <div id="calendar__body"></div>
+
+      <div id="add-event" class="hidden">
+        <div class="event-header">
+          <p>Add an event</p>
+          <button class="exit-button">
+            <i class="fa-solid fa-circle-xmark exit"></i>
+          </button>
+        </div>
+
+        <form>
+          <input
+            type="text"
+            id="event-name"
+            name="eventName"
+            placeholder="Add a title"
+          />
+          <input
+            type="text"
+            id="event-description"
+            name="eventDescription"
+            placeholder="Add a description"
+          />
+          <button class="button button--primary">Submit</button>
+        </form>
+      </div>
+    </main>
+
+    <script src="/public/scripts/bundle.js"></script>
+  </body>
+</html>

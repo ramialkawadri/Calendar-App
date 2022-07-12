@@ -1,0 +1,155 @@
+/*------------------------
+        Navigation
+-------------------------- */
+nav {
+  padding: 1.6rem 3.2rem;
+  font-size: 1.6rem;
+  border-bottom: 1px solid rgba(var(--divider-color-rgb), 0.6);
+  /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
+
+  display: flex;
+  align-items: center;
+  gap: 3.2rem;
+}
+
+.nav__logo {
+  display: flex;
+  align-items: center;
+}
+
+.nav__logo_image {
+  color: var(--primary-color);
+  font-size: 2.4rem;
+}
+
+.nav__logo__text {
+  margin-left: 1.2rem;
+}
+
+.nav__movement .button {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+/*------------------------
+      Calendar table
+-------------------------- */
+#calendar-table {
+  font-size: 1.2rem;
+  position: relative;
+}
+
+#calendar-table.week #calendar__header,
+#calendar-table.week #calendar__body {
+  grid-template-columns: 1fr repeat(7, 3fr);
+}
+
+#calendar-table.four #calendar__header,
+#calendar-table.four #calendar__body {
+  grid-template-columns: 1fr repeat(4, 3fr);
+}
+
+#calendar-table.day #calendar__header,
+#calendar-table.day #calendar__body {
+  grid-template-columns: 1fr 3fr;
+}
+
+#calendar__header,
+#calendar__body {
+  display: grid;
+  align-items: stretch;
+}
+/*------------------------
+      Calendar header
+-------------------------- */
+#calendar__header {
+  border-bottom: var(--calendar-cells-border);
+  padding: 1.2rem 2.4rem;
+
+  position: sticky;
+  top: 0;
+  background-color: var(--light-text);
+  z-index: 2;
+}
+
+#calendar__header > * {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+#calendar__header > *:not(:last-child) {
+  border-right: var(--calendar-cells-border);
+}
+
+/*------------------------
+      Calendar body
+-------------------------- */
+#calendar__body {
+  padding: 0 2.4rem;
+  position: relative;
+}
+
+.calendar__body__row {
+  display: grid;
+}
+
+.calendar__body__row .calendar__hour {
+  padding-right: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+#calendar__body .calendar__cell {
+  height: var(--cell-height);
+  border-left: var(--calendar-cells-border);
+  border-bottom: var(--calendar-cells-border);
+  cursor: pointer;
+}
+
+/*------------------------
+      Add event form
+-------------------------- */
+#add-event {
+  position: absolute;
+  background-color: var(--light-text);
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  box-shadow: 0 0 10px rgba(var(--divider-color-rgb), 0.6);
+  min-width: 25rem;
+}
+
+#add-event .event-header {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 1.6rem;
+  padding: 0.8rem 1rem;
+  color: var(--secondary-text-color);
+  background-color: rgba(117, 117, 117, 0.05);
+}
+
+#add-event .event-header button {
+  background-color: transparent;
+  color: inherit;
+  border: none;
+}
+
+#add-event .event-header .exit {
+  transition: color 0.3s ease-in;
+}
+
+#add-event .event-header button:hover .exit {
+  color: var(--primary-text-color);
+}
+
+#add-event form {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
