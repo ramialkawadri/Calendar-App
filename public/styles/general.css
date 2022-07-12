@@ -20,6 +20,7 @@ https://www.materialpalette.com/ -> choose blue and red
   --light-text: #fff;
   --divider-color: #bdbdbd;
   --divider-color-rgb: 189, 189, 189;
+  --light-grey: #d5d5d5;
 
   --calendar-cells-border: 1px solid rgba(var(--divider-color-rgb), 0.3);
   --cell-height: 5rem;
@@ -73,7 +74,7 @@ input[type='text'] {
 .button:active,
 .button:link:active,
 .button:visited:active {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .button--primary,

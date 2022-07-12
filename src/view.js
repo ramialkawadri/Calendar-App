@@ -1,15 +1,12 @@
-import { getTimezoneAbbre } from './Time';
+import { getTimezoneAbbre } from './time';
+import { showAddNewEvent } from './eventadder';
+import { calculateMinutePresentage } from './utility';
 
 const moment = require('moment');
 
 const table = document.getElementById('calendar-table');
 const tableBody = document.getElementById('calendar__body');
 const tableHeader = document.getElementById('calendar__header');
-const addEventEl = document.getElementById('add-event');
-
-addEventEl.querySelector('.exit-button').addEventListener('click', () => {
-  addEventEl.classList.add('hidden');
-});
 
 // Generate an empty table header with the days starting from startingTime,
 // this is a helper function for generateEmptyTable
@@ -69,11 +66,19 @@ const generateTableBody = (startingTime, numberOfDays) => {
         tabelCell.classList.add('calendar__cell');
         tabelRow.appendChild(tabelCell);
 
-        tabelCell.addEventListener('click', () => {
+        tabelCell.addEventListener('click', (e) => {
+          // Calculating where in the cell the user clicked
+          const minutePresentage = calculateMinutePresentage(
+            e.clientY - e.target.getBoundingClientRect().top,
+            tabelCell.offsetHeight
+          );
+
           const timestamp = moment(time)
             .add(i - 1, 'days')
             .add(j, 'hour')
-            .unix();
+            .minutes(minutePresentage * 60)
+            .valueOf();
+
           showAddNewEvent(timestamp, tabelCell);
         });
       }
@@ -89,17 +94,6 @@ const generateEmptyTable = (startingTime = moment(), numberOfDays = 7) => {
 
   tableBody.innerHTML = '';
   generateTableBody(startingTime, numberOfDays);
-};
-
-const showAddNewEvent = (timestamp, parentEl) => {
-  addEventEl.classList.remove('hidden');
-  addEventEl.style.top = `${
-    parentEl.getBoundingClientRect().top + window.scrollY
-  }px`;
-
-  addEventEl.style.left = `${
-    parentEl.getBoundingClientRect().left + window.scrollX
-  }px`;
 };
 
 export { generateEmptyTable };

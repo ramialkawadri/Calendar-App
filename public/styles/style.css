@@ -107,6 +107,18 @@ nav {
   border-left: var(--calendar-cells-border);
   border-bottom: var(--calendar-cells-border);
   cursor: pointer;
+  position: relative;
+}
+
+#calendar__body .calendar__cell div {
+  border-radius: 3px;
+  padding: 3%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  background-color: var(--secondary-color);
+  color: var(--light-text);
 }
 
 /*------------------------
@@ -120,7 +132,7 @@ nav {
   z-index: 1;
 
   box-shadow: 0 0 10px rgba(var(--divider-color-rgb), 0.6);
-  min-width: 25rem;
+  min-width: 30rem;
 }
 
 #add-event .event-header {
@@ -133,6 +145,16 @@ nav {
   background-color: rgba(117, 117, 117, 0.05);
 }
 
+.event-container {
+  padding: 1.2rem;
+}
+
+#add-event .time {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
 #add-event .event-header button {
   background-color: transparent;
   color: inherit;
@@ -141,15 +163,24 @@ nav {
 
 #add-event .event-header .exit {
   transition: color 0.3s ease-in;
+  cursor: pointer;
 }
 
 #add-event .event-header button:hover .exit {
-  color: var(--primary-text-color);
+  color: var(--secondary-color);
 }
 
 #add-event form {
-  padding: 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+}
+
+/*------------------------
+      Events
+-------------------------- */
+.event .description {
+  color: var(--light-grey);
+  margin-top: 0.4rem;
+  font-size: 1rem;
 }
