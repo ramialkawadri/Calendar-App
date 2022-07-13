@@ -1,6 +1,6 @@
 //  This file handles the generating of the calendar table and showing it
 import { getTimezoneAbbre } from './time';
-import { showAddNewEvent } from './eventadder';
+import { showEventEditor } from './eventEditor';
 import { calculateMinutePresentage } from './utility';
 
 const moment = require('moment');
@@ -93,7 +93,7 @@ const generateTableBody = (startingTime, numberOfDays) => {
             .add(j, 'hour')
             .minutes(minutePresentage * 60)
             .valueOf();
-          showAddNewEvent(timestamp, tabelCell);
+          showEventEditor(tabelCell, null, timestamp);
         });
       }
     }

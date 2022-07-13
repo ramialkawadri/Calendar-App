@@ -110,19 +110,19 @@ nav {
   position: relative;
 }
 
-#calendar__body .calendar__cell > div {
+#calendar__body .calendar__cell .event {
   border-radius: 3px;
   padding: 3px;
   position: absolute;
-  top: 2px;
-  left: 2px;
-  right: 2px;
+  top: 4px;
+  left: 4px;
+  right: 4px;
   background-color: var(--secondary-color);
   color: var(--light-text);
 }
 
 /*------------------------
-      Add event form
+     Event editor 
 -------------------------- */
 #add-event {
   position: absolute;
