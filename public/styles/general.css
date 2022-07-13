@@ -23,7 +23,6 @@ https://www.materialpalette.com/ -> choose blue and red
   --light-grey: #d5d5d5;
 
   --calendar-cells-border: 1px solid rgba(var(--divider-color-rgb), 0.3);
-  --cell-height: 5rem;
 }
 
 * {

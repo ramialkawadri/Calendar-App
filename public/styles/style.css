@@ -37,6 +37,7 @@ nav {
 #calendar-table {
   font-size: 1.2rem;
   position: relative;
+  overflow: hidden;
 }
 
 #calendar-table.week #calendar__header,
@@ -69,7 +70,7 @@ nav {
   position: sticky;
   top: 0;
   background-color: var(--light-text);
-  z-index: 2;
+  z-index: 9;
 }
 
 #calendar__header > * {
@@ -103,16 +104,15 @@ nav {
 }
 
 #calendar__body .calendar__cell {
-  height: var(--cell-height);
   border-left: var(--calendar-cells-border);
   border-bottom: var(--calendar-cells-border);
   cursor: pointer;
   position: relative;
 }
 
-#calendar__body .calendar__cell div {
+#calendar__body .calendar__cell > div {
   border-radius: 3px;
-  padding: 3%;
+  padding: 3px;
   position: absolute;
   top: 2px;
   left: 2px;
@@ -129,10 +129,23 @@ nav {
   background-color: var(--light-text);
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 3;
 
   box-shadow: 0 0 10px rgba(var(--divider-color-rgb), 0.6);
   min-width: 30rem;
+  animation: fade-right 0.3s ease-out;
+}
+
+@keyframes fade-right {
+  from {
+    transform: translateX(-10%);
+    opacity: 0.6;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 #add-event .event-header {
@@ -179,8 +192,32 @@ nav {
 /*------------------------
       Events
 -------------------------- */
+.event {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.event .title,
+.event .description {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+}
+
 .event .description {
   color: var(--light-grey);
   margin-top: 0.4rem;
-  font-size: 1rem;
+}
+
+.event .resize-box {
+  position: absolute;
+  height: 3px;
+  top: 100%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  z-index: 2;
+  cursor: s-resize;
 }

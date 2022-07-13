@@ -10,4 +10,7 @@ const calculateMinutePresentage = (mouseClickPosition, containerHeight) => {
   return presentage;
 };
 
-export { calculateMinutePresentage };
+const getElementHeightFromCSS = (element) =>
+  Number(element.style.height.replace('px', ''));
+
+export { calculateMinutePresentage, getElementHeightFromCSS };

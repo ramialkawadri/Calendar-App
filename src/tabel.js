@@ -1,12 +1,16 @@
+//  This file handles the generating of the calendar table and showing it
 import { getTimezoneAbbre } from './time';
 import { showAddNewEvent } from './eventadder';
 import { calculateMinutePresentage } from './utility';
 
 const moment = require('moment');
 
+const cellHeight = 60; // In pixels
 const table = document.getElementById('calendar-table');
 const tableBody = document.getElementById('calendar__body');
 const tableHeader = document.getElementById('calendar__header');
+
+const getCellHeight = () => cellHeight;
 
 // Generate an empty table header with the days starting from startingTime,
 // this is a helper function for generateEmptyTable
@@ -17,6 +21,7 @@ const generateTableHeader = (startingTime, numberOfDays) => {
   for (let i = 0; i <= numberOfDays; ++i) {
     const headerChild = document.createElement('div');
     if (i === 0) {
+      // Showing the time zone in the first cell
       headerChild.textContent = getTimezoneAbbre();
     } else {
       const dayNameEl = document.createElement('p');
@@ -48,37 +53,46 @@ const generateTableBody = (startingTime, numberOfDays) => {
 
   tableBody.classList.add('calendar__body');
 
+  // Makes the table rows and add them
   for (let i = 0; i <= numberOfDays; ++i) {
     const tabelRow = document.createElement('div');
     tabelRow.classList.add('calendar__body__row');
 
     if (i === 0) {
+      // Show the clock in the first row
       for (let j = 0; j <= 23; ++j) {
-        const tableCell = document.createElement('div');
-        tableCell.classList.add('calendar__hour');
-        if (j < 10) tableCell.textContent = `0${j}:00`;
-        else tableCell.textContent = `${j}:00`;
-        tabelRow.appendChild(tableCell);
+        const tabelCell = document.createElement('div');
+        tabelCell.style.height = `${cellHeight}px`;
+        tabelCell.classList.add('calendar__hour');
+
+        // Formating the hour
+        if (j < 10) tabelCell.textContent = `0${j}:00`;
+        else tabelCell.textContent = `${j}:00`;
+
+        tabelRow.appendChild(tabelCell);
       }
     } else {
       for (let j = 0; j <= 23; ++j) {
         const tabelCell = document.createElement('div');
+        tabelCell.style.height = `${cellHeight}px`;
         tabelCell.classList.add('calendar__cell');
         tabelRow.appendChild(tabelCell);
 
+        // Click event for showing the add event form
         tabelCell.addEventListener('click', (e) => {
-          // Calculating where in the cell the user clicked
+          // Calculating where in the cell the user clicked, to know how far
+          // we need to show the placeholder
           const minutePresentage = calculateMinutePresentage(
             e.clientY - e.target.getBoundingClientRect().top,
             tabelCell.offsetHeight
           );
 
+          // The time stamp for the appropite day, hour, and minute
           const timestamp = moment(time)
             .add(i - 1, 'days')
             .add(j, 'hour')
             .minutes(minutePresentage * 60)
             .valueOf();
-
           showAddNewEvent(timestamp, tabelCell);
         });
       }
@@ -96,4 +110,4 @@ const generateEmptyTable = (startingTime = moment(), numberOfDays = 7) => {
   generateTableBody(startingTime, numberOfDays);
 };
 
-export { generateEmptyTable };
+export { generateEmptyTable, getCellHeight };

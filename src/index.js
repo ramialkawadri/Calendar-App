@@ -5,7 +5,7 @@ import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
 
 // Javascript files
-import { generateEmptyTable } from './view';
+import { generateEmptyTable } from './tabel';
 generateEmptyTable();
 
 // viewTable(null);
