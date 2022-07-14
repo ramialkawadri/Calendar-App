@@ -1,12 +1,10 @@
+// This file has functions for working with time
+
+// Return the current timezone abbreviation
 const getTimezoneAbbre = (date = new Date()) =>
   date.toLocaleTimeString('en-us', { timeZoneName: 'short' }).split(' ')[2];
 
-const addMinutesToTimestamp = (timestamp, minutes) =>
-  minutes * 60000 + timestamp;
-
-const subtractMinutesFromTimestamp = (timestamp, minutes) =>
-  timestamp - minutes * 60000;
-
+// All these functions works in milliseconds
 const addDaysToTimeStamp = (timestamp, days) => timestamp + 86400000 * days;
 
 const subtractDaysFromTimeStamp = (timestamp, days) =>
@@ -16,6 +14,12 @@ const addHoursToTimeStamp = (timestamp, hours) => timestamp + 3600000 * hours;
 
 const subtractHoursFromTimeStamp = (timestamp, hours) =>
   timestamp - 3600000 * hours;
+
+const addMinutesToTimestamp = (timestamp, minutes) =>
+  timestamp + minutes * 60000;
+
+const subtractMinutesFromTimestamp = (timestamp, minutes) =>
+  timestamp - minutes * 60000;
 
 export {
   getTimezoneAbbre,

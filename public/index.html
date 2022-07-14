@@ -44,7 +44,7 @@
       <div id="calendar__header"></div>
       <div id="calendar__body"></div>
 
-      <div id="add-event" class="hidden">
+      <div id="event-editor" class="hidden">
         <div class="event-header">
           <p class="editor-title">Add an event</p>
           <button class="exit-button">
@@ -52,31 +52,34 @@
           </button>
         </div>
 
-        <div class="event-container">
-        <div class="time">
-          <p>From <span class="from"></span></p>
-          <p>To <span class="to"></span></p>
-        </div>
-        <form>
-          <input
-            type="text"
-            id="event-name"
-            name="eventName"
-            placeholder="Add a title"
-          />
-          <input
-            type="text"
-            id="event-description"
-            name="eventDescription"
-            placeholder="Add a description"
-          />
-          <div class="buttons">
-            <div role="button" class="button button--secondary delete-button"><i class="fa-solid fa-trash-can"></i> Delete</div>
-            <button class="button button--primary"><i class="fa-solid fa-arrow-right-to-bracket"></i> Submit</button>
+        <div class="event-form__container">
+          <div class="time">
+            <p>From <span class="from"></span></p>
+            <p>To <span class="to"></span></p>
           </div>
-
-        </form>
-
+          <form>
+            <input
+              type="text"
+              id="event-name"
+              name="eventName"
+              placeholder="Add a title"
+            />
+            <input
+              type="text"
+              id="event-description"
+              name="eventDescription"
+              placeholder="Add a description"
+            />
+            <div class="buttons">
+              <div role="button" class="button button--secondary delete-button">
+                <i class="fa-solid fa-trash-can"></i> Delete
+              </div>
+              <button class="button button--primary">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Submit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
 

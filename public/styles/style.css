@@ -5,7 +5,6 @@ nav {
   padding: 1.6rem 3.2rem;
   font-size: 1.6rem;
   border-bottom: 1px solid rgba(var(--divider-color-rgb), 0.6);
-  /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
 
   display: flex;
   align-items: center;
@@ -37,7 +36,6 @@ nav {
 #calendar-table {
   font-size: 1.2rem;
   position: relative;
-  overflow: hidden;
 }
 
 #calendar-table.week #calendar__header,
@@ -66,6 +64,7 @@ nav {
 #calendar__header {
   border-bottom: var(--calendar-cells-border);
   padding: 1.2rem 2.4rem;
+  padding-right: 0;
 
   position: sticky;
   top: 0;
@@ -73,14 +72,15 @@ nav {
   z-index: 9;
 }
 
-#calendar__header > * {
+#calendar__header div {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: center;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-#calendar__header > *:not(:last-child) {
+#calendar__header div:not(:last-child) {
   border-right: var(--calendar-cells-border);
 }
 
@@ -88,16 +88,18 @@ nav {
       Calendar body
 -------------------------- */
 #calendar__body {
-  padding: 0 2.4rem;
+  padding-left: 2.4rem;
   position: relative;
+  overflow: hidden;
 }
 
 .calendar__body__row {
-  display: grid;
+  display: flex;
+  flex-direction: column;
 }
 
 .calendar__body__row .calendar__hour {
-  padding-right: 1.2rem;
+  padding-right: 0.8rem;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -110,37 +112,25 @@ nav {
   position: relative;
 }
 
-#calendar__body .calendar__cell .event {
-  border-radius: 3px;
-  padding: 3px;
-  position: absolute;
-  top: 3px;
-  left: 6px;
-  right: 6px;
-  background-color: var(--secondary-color);
-  color: var(--light-text);
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
-}
-
 /*------------------------
      Event editor 
 -------------------------- */
-#add-event {
+#event-editor {
   position: absolute;
   background-color: var(--light-text);
   top: 0;
   left: 0;
   z-index: 3;
 
-  box-shadow: 0 0 10px rgba(var(--divider-color-rgb), 0.6);
+  box-shadow: 0 0 18px rgba(var(--divider-color-rgb), 0.75);
   min-width: 30rem;
-  animation: fade-right 0.3s ease-out;
+  animation: fade-right 0.35s ease-out;
 }
 
 @keyframes fade-right {
   from {
-    transform: translateX(-10%);
-    opacity: 0.6;
+    transform: translateX(-5%);
+    opacity: 0.5;
   }
 
   to {
@@ -149,48 +139,45 @@ nav {
   }
 }
 
-#add-event .event-header {
+#event-editor .event-header {
   display: flex;
   justify-content: space-between;
 
   font-size: 1.6rem;
-  padding: 0.8rem 1rem;
-  color: var(--secondary-text-color);
-  background-color: rgba(117, 117, 117, 0.05);
+  padding: 1.2rem 1.6rem;
+  background-color: var(--dark-primary-color);
+  color: var(--light-text);
 }
 
-.event-container {
-  padding: 1.2rem;
+.event-form__container {
+  padding: 1.6rem;
 }
 
-#add-event .time {
+#event-editor .time {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
-#add-event .event-header button {
+#event-editor .event-header .exit-button {
   background-color: transparent;
   color: inherit;
   border: none;
-}
-
-#add-event .event-header .exit {
-  transition: color 0.3s ease-in;
+  transition: opacity 0.3s ease-in;
   cursor: pointer;
 }
 
-#add-event .event-header button:hover .exit {
-  color: var(--secondary-color);
+#event-editor .event-header .exit-button:hover {
+  opacity: 0.7;
 }
 
-#add-event form {
+#event-editor form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
 
-#add-event .buttons {
+#event-editor .buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 1rem;
@@ -203,7 +190,15 @@ nav {
   position: relative;
   z-index: 1;
   overflow: hidden;
-  transition: all 0.05s ease-out;
+
+  border-radius: 3px;
+  padding: 3px 6px;
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
 }
 
 .event:hover,
@@ -217,7 +212,7 @@ nav {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 1rem;
+  font-size: 1.2rem;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -233,7 +228,7 @@ nav {
 
 .event .resize-box {
   position: absolute;
-  height: 8px;
+  height: 10px;
   top: 100%;
   transform: translateY(-50%);
   left: 0;
