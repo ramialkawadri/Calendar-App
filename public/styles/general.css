@@ -64,7 +64,12 @@ input[type='text'] {
   border-radius: 3px;
   cursor: pointer;
   background-color: transparent;
-  transition: opacity 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
 }
 
 .button:hover,
@@ -73,13 +78,21 @@ input[type='text'] {
 .button:active,
 .button:link:active,
 .button:visited:active {
-  opacity: 0.8;
+  opacity: 0.95;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
 }
 
 .button--primary,
 .button--primary:link,
 .button--primary:visited {
   background-color: var(--primary-color);
+  color: var(--light-text);
+}
+
+.button--secondary,
+.button--secondary:link,
+.button--secondary:visited {
+  background-color: var(--secondary-color);
   color: var(--light-text);
 }
 

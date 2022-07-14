@@ -20,7 +20,7 @@ const clearInputsAndClose = () => {
   hideEditor();
 };
 
-const isHidden = () => eventEditorEl.classList.contains('hidden');
+const isEditorHidden = () => eventEditorEl.classList.contains('hidden');
 
 // Updates the title and description of the placeholder to those written
 // inside the text fields
@@ -52,8 +52,12 @@ const removePlaceholder = () => {
   }
 };
 
-const hideEditor = () => {
+const hideEditorVisually = () => {
   eventEditorEl.classList.add('hidden');
+};
+
+const hideEditor = () => {
+  hideEditorVisually();
   titleInputEl.value = '';
   descriptionInputEl.value = '';
 
@@ -72,23 +76,29 @@ eventEditorEl
 const showEventEditor = (
   parentEl,
   eventEl = null,
-  startTimestamp = moment().valueOf()
+  startTimestamp = moment().valueOf(),
+  // Indicates if the element can be a placeholder or not, used for moving event
+  canBePlaceHolder = true
 ) => {
   // Checking if we are already editing the same element
-  if (eventEl === selectedEventEl && !isHidden()) {
+  if (eventEl === selectedEventEl && !isEditorHidden()) {
     return;
   }
 
-  // Removes the placeholder in case
-  removePlaceholder();
+  if (canBePlaceHolder) {
+    // Removes the placeholder in case
+    removePlaceholder();
+  }
 
   // Means an unnamed element
   if (!eventEl) {
     isPlaceholder = true;
     selectedEventEl = generateEventEl(parentEl, startTimestamp);
+    eventEditorEl.querySelector('.editor-title').textContent = 'Add an event';
   } else {
     isPlaceholder = false;
     selectedEventEl = eventEl;
+    eventEditorEl.querySelector('.editor-title').textContent = 'Edit';
   }
 
   // Showing the element
@@ -140,4 +150,16 @@ const updateEventEditorTimes = () => {
   }
 };
 
-export { showEventEditor, updateEventEditorTimes, hideEditor };
+eventEditorEl.querySelector('.delete-button').addEventListener('click', (e) => {
+  e.stopPropagation();
+  selectedEventEl.remove();
+  hideEditor();
+});
+
+export {
+  showEventEditor,
+  updateEventEditorTimes,
+  hideEditor,
+  isEditorHidden,
+  hideEditorVisually,
+};

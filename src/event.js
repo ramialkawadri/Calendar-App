@@ -2,6 +2,8 @@ import {
   hideEditor,
   showEventEditor,
   updateEventEditorTimes,
+  isEditorHidden,
+  hideEditorVisually,
 } from './eventEditor';
 import { getCellHeight, getCellParent } from './tabel';
 import { getElementHeightFromCSS } from './utility';
@@ -191,9 +193,17 @@ const enableMovingEvents = (eventEl, startTimestamp, endTimestamp) => {
   // A variable to indicate if we have moved the event or not
   let hasMoved = false;
 
+  // Indicates if the editor was hidden or not
+  let wasEditorHidden;
+
   eventEl.addEventListener('mousedown', (e) => {
+    wasEditorHidden = isEditorHidden();
+    hideEditorVisually();
     mousePosition.lastUpdatedY = e.clientY;
     hasMoved = false;
+
+    // Making sure to not start multiple intervals
+    if (interval) clearInterval(interval);
     interval = setInterval(movingFunction, movingEventTime);
   });
 
@@ -202,7 +212,7 @@ const enableMovingEvents = (eventEl, startTimestamp, endTimestamp) => {
     mousePosition.x = e.clientX - eventEl.getBoundingClientRect().left;
   });
 
-  eventEl.addEventListener('mouseup', (e) => {
+  const endMovingEvent = (e) => {
     e.stopPropagation();
     if (interval) {
       clearInterval(interval);
@@ -210,15 +220,14 @@ const enableMovingEvents = (eventEl, startTimestamp, endTimestamp) => {
       eventEl.setAttribute('start-time', startTimestamp);
       eventEl.setAttribute('end-time', endTimestamp);
     }
-    if (!hasMoved) showEventEditor(eventEl.parentNode, eventEl, startTimestamp);
-    else {
-      hideEditor();
-    }
-  });
 
-  eventEl.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
+    if (!hasMoved || !wasEditorHidden) {
+      showEventEditor(eventEl.parentNode, eventEl, startTimestamp, false);
+    } else hideEditor();
+  };
+
+  eventEl.addEventListener('mouseup', endMovingEvent);
+  eventEl.addEventListener('click', endMovingEvent);
 };
 
 // Generate a temporarily placeholder so it helps the user with making an event
