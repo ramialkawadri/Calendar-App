@@ -125,12 +125,13 @@ const showEventEditor = (
   descriptionInputEl.value = selectedEventEl.getAttribute('description');
 };
 
+// Updates the time from the selected event
 const updateEventEditorTimes = () => {
   if (selectedEventEl) {
     const startTimestamp = Number(selectedEventEl.getAttribute('start-time'));
     const endTimestamp = Number(selectedEventEl.getAttribute('end-time'));
 
-    const timeFormat = 'ddd, MM, MMM HH:mm';
+    const timeFormat = 'ddd, DD, MMM HH:mm';
     eventEditorEl.querySelector('.from').textContent =
       moment(startTimestamp).format(timeFormat);
 
@@ -139,4 +140,4 @@ const updateEventEditorTimes = () => {
   }
 };
 
-export { showEventEditor };
+export { showEventEditor, updateEventEditorTimes, hideEditor };

@@ -114,11 +114,12 @@ nav {
   border-radius: 3px;
   padding: 3px;
   position: absolute;
-  top: 4px;
-  left: 4px;
-  right: 4px;
+  top: 3px;
+  left: 6px;
+  right: 6px;
   background-color: var(--secondary-color);
   color: var(--light-text);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
 }
 
 /*------------------------
@@ -196,6 +197,13 @@ nav {
   position: relative;
   z-index: 1;
   overflow: hidden;
+  transition: all 0.05s ease-out;
+}
+
+.event:hover,
+.event:active {
+  transform: scale(1.02);
+  box-shadow: 0 0 9px rgba(0, 0, 0, 0.5);
 }
 
 .event .title,
@@ -204,6 +212,12 @@ nav {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1rem;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .event .description {
@@ -213,7 +227,7 @@ nav {
 
 .event .resize-box {
   position: absolute;
-  height: 3px;
+  height: 8px;
   top: 100%;
   transform: translateY(-50%);
   left: 0;

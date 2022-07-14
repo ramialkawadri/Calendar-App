@@ -9,6 +9,7 @@ const cellHeight = 60; // In pixels
 const table = document.getElementById('calendar-table');
 const tableBody = document.getElementById('calendar__body');
 const tableHeader = document.getElementById('calendar__header');
+let startTimestamp;
 
 const getCellHeight = () => cellHeight;
 
@@ -103,6 +104,8 @@ const generateTableBody = (startingTime, numberOfDays) => {
 
 // Generate an empty table and views it
 const generateEmptyTable = (startingTime = moment(), numberOfDays = 7) => {
+  startTimestamp = startingTime.valueOf();
+
   tableHeader.innerHTML = '';
   generateTableHeader(startingTime, numberOfDays);
 
@@ -110,4 +113,22 @@ const generateEmptyTable = (startingTime = moment(), numberOfDays = 7) => {
   generateTableBody(startingTime, numberOfDays);
 };
 
-export { generateEmptyTable, getCellHeight };
+// Return the cell for the timestamp, null if the timestamp is outside the tabell
+const getCellParent = (timestamp) => {
+  const startDate = moment(startTimestamp),
+    endDate = moment(timestamp);
+
+  const daysDiff = endDate.diff(startDate, 'days') + 1;
+
+  if (daysDiff < 0) return null;
+
+  const tableRow = document.querySelectorAll('.calendar__body__row')[
+    daysDiff + 1
+  ];
+
+  const tableCell =
+    tableRow.querySelectorAll('.calendar__cell')[endDate.hours()];
+  return tableCell;
+};
+
+export { generateEmptyTable, getCellHeight, getCellParent };
