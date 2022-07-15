@@ -4,36 +4,35 @@ import { calculateMinutePercentage } from './utility';
 import EventEditor from './eventEditor';
 import Event from './event';
 
-class Tabel {
-  constructor(tabelEl) {
+class Table {
+  constructor(tableEl, cellHeight = 60) {
     this.moment = require('moment');
-    this.cellHeight = 60; // In pixels
-    this.tabelEl = tabelEl;
-    this.tabelBody = this.tabelEl.querySelector('#calendar__body');
-    this.tabelHeader = this.tabelEl.querySelector('#calendar__header');
+    this.cellHeight = cellHeight; // In pixels
+    this.tableEl = tableEl;
+    this.tableBody = tableEl.querySelector('#calendar__body');
+    this.tableHeader = tableEl.querySelector('#calendar__header');
 
     // The timestamp that the table begins with
     this.currentTimestamp = 0;
-
     // Hold the number of days that are shown on the table
     this.numberOfDaysShown = 0;
 
     this.eventEditor = new EventEditor(this);
   }
 
-  // Returns the tabel height
+  // Returns the table height
   height() {
-    return this.tabelEl.offsetHeight;
+    return this.tableEl.offsetHeight;
   }
 
-  // Returns the tabel width
+  // Returns the table width
   width() {
-    return this.tabelEl.offsetWidth;
+    return this.tableEl.offsetWidth;
   }
 
-  // Return the DOM element for the tabel
-  getTabelEl() {
-    return this.tabelEl;
+  // Return the DOM element for the table
+  getTableDOM() {
+    return this.tableEl;
   }
 
   getCellHeight() {
@@ -66,7 +65,7 @@ class Tabel {
         // Moving the date
         time.add(1, 'days');
       }
-      this.tabelHeader.appendChild(headerChild);
+      this.tableHeader.appendChild(headerChild);
     }
   }
 
@@ -81,34 +80,34 @@ class Tabel {
 
     // Making the table rows and adding them
     for (let i = 0; i <= numberOfDays; ++i) {
-      const tabelRow = document.createElement('div');
-      tabelRow.classList.add('calendar__body__row');
+      const tableRow = document.createElement('div');
+      tableRow.classList.add('calendar__body__row');
 
       if (i === 0) {
         // Show the clock in the first row
         for (let j = 0; j <= 23; ++j) {
-          const tabelCell = document.createElement('div');
-          tabelCell.style.height = `${this.getCellHeight()}px`;
-          tabelCell.classList.add('calendar__hour');
+          const tableCell = document.createElement('div');
+          tableCell.style.height = `${this.getCellHeight()}px`;
+          tableCell.classList.add('calendar__hour');
 
-          // Formating the hour
-          if (j < 10) tabelCell.textContent = `0${j}:00`;
-          else tabelCell.textContent = `${j}:00`;
+          // Formatting the hour
+          if (j < 10) tableCell.textContent = `0${j}:00`;
+          else tableCell.textContent = `${j}:00`;
 
-          tabelRow.appendChild(tabelCell);
+          tableRow.appendChild(tableCell);
         }
       } else {
         for (let j = 0; j <= 23; ++j) {
-          const tabelCell = document.createElement('div');
-          tabelCell.style.height = `${this.getCellHeight()}px`;
-          tabelCell.classList.add('calendar__cell');
-          tabelRow.appendChild(tabelCell);
+          const tableCell = document.createElement('div');
+          tableCell.style.height = `${this.getCellHeight()}px`;
+          tableCell.classList.add('calendar__cell');
+          tableRow.appendChild(tableCell);
 
           // Click event to add a new calendar event
-          tabelCell.addEventListener('click', (e) => {
+          tableCell.addEventListener('click', (e) => {
             // Calculating where in the cell the user clicked, to know how far
             // we need to show the placeholder
-            const minutePresentage = calculateMinutePercentage(
+            const minutePercentage = calculateMinutePercentage(
               e.clientY - e.target.getBoundingClientRect().top,
               this.getCellHeight()
             );
@@ -117,20 +116,20 @@ class Tabel {
             const timestamp = this.moment(time)
               .add(i - 1, 'days')
               .add(j, 'hour')
-              .minutes(minutePresentage * 60)
+              .minutes(minutePercentage * 60)
               .valueOf();
 
             const event = new Event(
               this,
               this.eventEditor,
-              tabelCell,
+              tableCell,
               timestamp
             );
             this.eventEditor.showEventEditor(event);
           });
         }
       }
-      this.tabelBody.appendChild(tabelRow);
+      this.tableBody.appendChild(tableRow);
     }
   }
 
@@ -139,24 +138,24 @@ class Tabel {
     this.currentTimestamp = startingTime.valueOf();
     this.numberOfDaysShown = numberOfDays;
 
-    this.tabelHeader.innerHTML = '';
+    this.tableHeader.innerHTML = '';
     this.#generateTableHeader(startingTime, numberOfDays);
 
-    this.tabelBody.innerHTML = '';
+    this.tableBody.innerHTML = '';
     this.#generateTableBody(startingTime, numberOfDays);
   }
 
   // Returns the cell that is showing the given timestamp, returns null if the
-  // timestamp is outside the tabell
+  // timestamp is outside the table
   getCellParent(timestamp) {
     const startDate = this.moment(this.currentTimestamp),
       endDate = this.moment(timestamp);
     const daysDiff = endDate.diff(startDate, 'days') + 1;
 
     // Outside the table
-    if (daysDiff < 0 || daysDiff > this.numberOfDaysShown) return null;
+    if (daysDiff < 0 || daysDiff + 1 > this.numberOfDaysShown) return null;
 
-    const tableRow = this.tabelEl.querySelectorAll('.calendar__body__row')[
+    const tableRow = this.tableEl.querySelectorAll('.calendar__body__row')[
       daysDiff + 1 // We add 1 because the first row holds the hours
     ];
 
@@ -166,4 +165,4 @@ class Tabel {
   }
 }
 
-export default Tabel;
+export default Table;

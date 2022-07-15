@@ -198,13 +198,11 @@ nav {
   right: 6px;
   background-color: var(--primary-color);
   color: var(--light-text);
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
 }
 
 .event:hover,
 .event:active {
-  transform: scale(1.02);
-  box-shadow: 0 0 9px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
 
 .event .title,
