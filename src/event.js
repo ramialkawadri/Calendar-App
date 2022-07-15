@@ -283,7 +283,9 @@ class Event {
     // Indicates if the editor was hidden or not
     let wasEditorHidden;
 
+    // Starts the movement
     eventEl.addEventListener('mousedown', (e) => {
+      this.eventEl.style.cursor = 'move';
       wasEditorHidden = this.eventEditor.isEditorHidden();
       this.eventEditor.hideEditorVisually();
       mousePosition.lastUpdatedY = e.clientY;
@@ -301,7 +303,9 @@ class Event {
       mousePosition.x = e.clientX - eventEl.getBoundingClientRect().left;
     });
 
+    // When the movement ends
     const endMovingEvent = (e) => {
+      this.eventEl.style.cursor = 'pointer';
       e.stopPropagation();
       if (interval) {
         clearInterval(interval);

@@ -10,7 +10,6 @@ import '@fortawesome/fontawesome-free/js/brands';
 import Tabel from './tabel';
 
 const calendar = new Tabel(document.getElementById('calendar-table'));
-
 export const getCalendar = () => calendar;
 calendar.generateEmptyTable();
 
@@ -18,4 +17,4 @@ calendar.generateEmptyTable();
 
 console.log('working');
 
-// TODO: Refactor the following: event.js, eventEditor.js
+// TODO: Refactor the following: event.js, eventEditor.js, tabel.js
