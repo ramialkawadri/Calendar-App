@@ -101,7 +101,7 @@ nav {
 .calendar__body__row .calendar__hour {
   padding-right: 0.8rem;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: end;
 }
 

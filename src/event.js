@@ -8,15 +8,92 @@ import {
 } from './time';
 
 class Event {
-  constructor(tabel, eventEditor) {
+  constructor(
+    tabel,
+    eventEditor,
+    parentEl,
+    startTimestamp,
+    endTimestamp = null,
+    title = '',
+    description = '',
+    isPlaceholder = true
+  ) {
     this.moment = require('moment');
     this.tabel = tabel;
     this.eventEditor = eventEditor;
+    this.eventEl = null;
+
+    // Represents the cell containing the event
+    this.parentEl = parentEl;
+
+    this.startTimestamp = startTimestamp;
+    if (!endTimestamp) {
+      endTimestamp = this.moment(startTimestamp).add(1, 'hour').valueOf();
+    }
+    this.endTimestamp = endTimestamp;
+    this.title = title;
+    this.description = description;
+    this.isPlaceholder = isPlaceholder;
+    this.id = uuidv4();
+
+    this.#initDom();
+  }
+
+  #initDom() {
+    const eventEl = document.createElement('div');
+    const titleEl = document.createElement('p');
+    const descriptionEl = document.createElement('p');
+
+    // Fixing the title
+    titleEl.classList.add('title');
+    titleEl.textContent = '(Unnamed)';
+    eventEl.appendChild(titleEl);
+
+    // Calculating the veritcal offset
+    eventEl.style.top = `${
+      (this.moment(this.startTimestamp).minute() / 60) *
+      this.tabel.getCellHeight()
+    }px`;
+
+    // Fixing the description
+    descriptionEl.classList.add('description');
+    eventEl.appendChild(descriptionEl);
+
+    eventEl.classList.add('event');
+    eventEl.style.height = `${this.tabel.getCellHeight()}px`;
+
+    this.parentEl.appendChild(eventEl);
+
+    /* 
+        This is a div that we put at the end of the placeholder, it is invisible
+        but gives the appropite mouse cursor and changes it size while resizing so
+        that it helps resizing the container.
+      */
+    const resizeBoxEl = document.createElement('div');
+    resizeBoxEl.classList.add('resize-box');
+    eventEl.appendChild(resizeBoxEl);
+
+    eventEl.setAttribute('start-time', this.startTimestamp);
+    eventEl.setAttribute('end-time', this.endTimestamp);
+    eventEl.setAttribute('title', this.title);
+    eventEl.setAttribute('description', this.description);
+    eventEl.setAttribute('uuid', this.id);
+
+    // Enable resizing
+    this.#enableResizeEvents(resizeBoxEl, eventEl);
+
+    // Enable moving
+    this.#enableMovingEvents(eventEl);
+    this.eventEl = eventEl;
+  }
+
+  get DOMElement() {
+    return this.eventEl;
   }
 
   // A function that adds the appropite events for enabling resizing,
   // resizeBoxEl is the invisible box at the bottom of the eventEl
-  #enableResizeEvents(resizeBoxEl, eventEl, endTimestamp) {
+  #enableResizeEvents(resizeBoxEl, eventEl) {
     // The position are relative to the eventEl
     let mousePosition = {
       lastUpdatedY: 0,
@@ -42,7 +119,7 @@ class Event {
         difference -= changeValue;
         const containerElHeight = getElementHeightFromCSS(eventEl);
         eventEl.style.height = `${containerElHeight + changeValue}px`;
-        endTimestamp = addMinutesToTimestamp(endTimestamp, 15);
+        this.endTimestamp = addMinutesToTimestamp(this.endTimestamp, 15);
       }
 
       while (difference < 0 && difference <= -cellHeight / 4) {
@@ -54,7 +131,10 @@ class Event {
             containerElHeight - changeValue,
             changeValue // It cannot be smaller than 1/4 the height
           )}px`;
-          endTimestamp = subtractMinutesFromTimestamp(endTimestamp, 15);
+          this.endTimestamp = subtractMinutesFromTimestamp(
+            this.endTimestamp,
+            15
+          );
         }
       }
 
@@ -62,14 +142,14 @@ class Event {
       mousePosition.lastUpdatedY = mousePosition.currentY - difference;
 
       // Updating the object attribute and the event time
-      eventEl.setAttribute('end-time', endTimestamp);
+      eventEl.setAttribute('end-time', this.endTimestamp);
       this.eventEditor.updateEventEditorTimes();
     };
 
     let interval;
 
     const initialResizeElementHeight = resizeBoxEl.offsetHeight;
-    // The resize height for the resize box
+    // The height for the resize box while resizing
     const resizeBoxResizeHeight = `${this.tabel.getCellHeight() * 5}px`;
 
     // The interval periode of the resize event in milliseconds
@@ -85,8 +165,9 @@ class Event {
       e.stopPropagation();
       mousePosition.lastUpdatedY =
         e.clientY - eventEl.getBoundingClientRect().top;
-      interval = setInterval(resizeEventFunction, intervalPeriode);
+      mousePosition.currentY = mousePosition.lastUpdatedY;
       resizeBoxEl.style.height = resizeBoxResizeHeight;
+      interval = setInterval(resizeEventFunction, intervalPeriode);
     });
 
     // Updates the mouse position
@@ -112,13 +193,13 @@ class Event {
       lastUpdatedY: 0,
     };
 
-    const cellWidth = eventEl.offsetWidth,
+    // A variable to indicate if we have moved the event or not
+    let hasMoved = false;
+
+    const cellWidth = eventEl.parentNode.offsetWidth,
       cellHeight = this.tabel.getCellHeight();
 
     const movingFunction = () => {
-      let startTimestamp = Number(eventEl.getAttribute('start-time')),
-        endTimestamp = Number(eventEl.getAttribute('end-time'));
-
       // If the changes are less or equal than this nothing happen in any direction
       const xGapError = cellWidth / 4;
       const yGapError = cellHeight / 6;
@@ -126,12 +207,13 @@ class Event {
       // Moving left
       if (mousePosition.x < -xGapError) {
         hasMoved = true;
-        startTimestamp = subtractDaysFromTimeStamp(startTimestamp, 1);
-        endTimestamp = subtractDaysFromTimeStamp(endTimestamp, 1);
+        this.startTimestamp = subtractDaysFromTimeStamp(this.startTimestamp, 1);
+        this.endTimestamp = subtractDaysFromTimeStamp(this.endTimestamp, 1);
 
-        const parentCell = this.tabel.getCellParent(startTimestamp);
+        const parentCell = this.tabel.getCellParent(this.startTimestamp);
         if (parentCell) {
           parentCell.appendChild(eventEl);
+          this.parentEl = parentCell;
         }
         mousePosition.x += cellWidth;
       }
@@ -139,12 +221,13 @@ class Event {
       // Moving right
       if (mousePosition.x > xGapError + cellWidth) {
         hasMoved = true;
-        startTimestamp = addDaysToTimeStamp(startTimestamp, 1);
-        endTimestamp = addDaysToTimeStamp(endTimestamp, 1);
+        this.startTimestamp = addDaysToTimeStamp(this.startTimestamp, 1);
+        this.endTimestamp = addDaysToTimeStamp(this.endTimestamp, 1);
 
-        const parentCell = this.tabel.getCellParent(startTimestamp);
+        const parentCell = this.tabel.getCellParent(this.startTimestamp);
         if (parentCell) {
           parentCell.appendChild(eventEl);
+          this.parentEl = parentCell;
         }
         mousePosition.x -= cellWidth;
       }
@@ -152,16 +235,20 @@ class Event {
       // Moving up, 15 minutes at the time
       if (mousePosition.lastUpdatedY - mousePosition.y > yGapError) {
         hasMoved = true;
-        startTimestamp = subtractMinutesFromTimestamp(startTimestamp, 15);
-        endTimestamp = subtractMinutesFromTimestamp(endTimestamp, 15);
+        this.startTimestamp = subtractMinutesFromTimestamp(
+          this.startTimestamp,
+          15
+        );
+        this.endTimestamp = subtractMinutesFromTimestamp(this.endTimestamp, 15);
 
-        const parentCell = this.tabel.getCellParent(startTimestamp);
+        const parentCell = this.tabel.getCellParent(this.startTimestamp);
         if (parentCell) {
           parentCell.appendChild(eventEl);
+          this.parentEl = parentCell;
 
           // Calculating the veritcal offset
           eventEl.style.top = `${
-            (this.moment(startTimestamp).minute() / 60) * cellHeight
+            (this.moment(this.startTimestamp).minute() / 60) * cellHeight
           }px`;
         }
         mousePosition.lastUpdatedY -= cellHeight * 0.25;
@@ -170,30 +257,28 @@ class Event {
       // Moving down, 15 minutes at the time
       if (mousePosition.y - mousePosition.lastUpdatedY > yGapError) {
         hasMoved = true;
-        startTimestamp = addMinutesToTimestamp(startTimestamp, 15);
-        endTimestamp = addMinutesToTimestamp(endTimestamp, 15);
+        this.startTimestamp = addMinutesToTimestamp(this.startTimestamp, 15);
+        this.endTimestamp = addMinutesToTimestamp(this.endTimestamp, 15);
 
-        const parentCell = this.tabel.getCellParent(startTimestamp);
+        const parentCell = this.tabel.getCellParent(this.startTimestamp);
         if (parentCell) {
           parentCell.appendChild(eventEl);
+          this.parentEl = parentCell;
 
           // Calculating the veritcal offset
           eventEl.style.top = `${
-            (this.moment(startTimestamp).minute() / 60) * cellHeight
+            (this.moment(this.startTimestamp).minute() / 60) * cellHeight
           }px`;
         }
         mousePosition.lastUpdatedY += cellHeight * 0.25;
       }
 
-      eventEl.setAttribute('start-time', startTimestamp);
-      eventEl.setAttribute('end-time', endTimestamp);
+      eventEl.setAttribute('start-time', this.startTimestamp);
+      eventEl.setAttribute('end-time', this.endTimestamp);
     };
 
-    const movingEventTime = 10;
+    const movingEventTime = 0;
     let interval;
-
-    // A variable to indicate if we have moved the event or not
-    let hasMoved = false;
 
     // Indicates if the editor was hidden or not
     let wasEditorHidden;
@@ -202,10 +287,12 @@ class Event {
       wasEditorHidden = this.eventEditor.isEditorHidden();
       this.eventEditor.hideEditorVisually();
       mousePosition.lastUpdatedY = e.clientY;
+      mousePosition.y = mousePosition.lastUpdatedY;
       hasMoved = false;
 
       // Making sure to not start multiple intervals
       if (interval) clearInterval(interval);
+      // Starting the interval
       interval = setInterval(movingFunction, movingEventTime);
     });
 
@@ -222,74 +309,12 @@ class Event {
       }
 
       if (!hasMoved || !wasEditorHidden) {
-        this.eventEditor.showEventEditor(
-          eventEl.parentNode,
-          eventEl,
-          Number(eventEl.getAttribute('start-time')),
-          false
-        );
+        this.eventEditor.showEventEditor(this);
       } else this.eventEditor.hideEditor();
     };
 
     eventEl.addEventListener('mouseup', endMovingEvent);
     eventEl.addEventListener('click', endMovingEvent);
-  }
-
-  // Generate a temporarily placeholder so it helps the user with making an event
-  generateEventEl(
-    parentEl,
-    startTimestamp,
-    endTimestamp = null,
-    title = '',
-    description = ''
-  ) {
-    if (!endTimestamp) {
-      endTimestamp = this.moment(startTimestamp).add(1, 'hour').valueOf();
-    }
-
-    const eventEl = document.createElement('div');
-    const titleEl = document.createElement('p');
-    titleEl.classList.add('title');
-    titleEl.textContent = '(Unnamed)';
-    eventEl.appendChild(titleEl);
-
-    // Calculating the veritcal offset
-    eventEl.style.top = `${
-      (this.moment(startTimestamp).minute() / 60) * this.tabel.getCellHeight()
-    }px`;
-
-    const descriptionEl = document.createElement('p');
-    descriptionEl.classList.add('description');
-    eventEl.appendChild(descriptionEl);
-
-    eventEl.classList.add('event');
-    eventEl.style.height = `${parentEl.offsetHeight}px`;
-
-    parentEl.appendChild(eventEl);
-
-    /* 
-    This is a div that we put at the end of the placeholder, it is invisible
-    but gives the appropite mouse cursor and changes it size while resizing so
-    that it helps resizing the container.
-  */
-    const resizeBoxEl = document.createElement('div');
-    resizeBoxEl.classList.add('resize-box');
-    eventEl.appendChild(resizeBoxEl);
-
-    eventEl.setAttribute('start-time', startTimestamp);
-    eventEl.setAttribute('end-time', endTimestamp);
-
-    eventEl.setAttribute('title', title);
-    eventEl.setAttribute('description', description);
-    eventEl.setAttribute('uuid', uuidv4());
-
-    // Enable resizing
-    this.#enableResizeEvents(resizeBoxEl, eventEl, endTimestamp);
-
-    // Enable moving
-    this.#enableMovingEvents(eventEl, startTimestamp, endTimestamp);
-
-    return eventEl;
   }
 }
 

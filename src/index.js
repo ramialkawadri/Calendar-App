@@ -18,4 +18,4 @@ calendar.generateEmptyTable();
 
 console.log('working');
 
-// TODO: Refactor the following: event.js, eventEditor.js, tabel.js
+// TODO: Refactor the following: event.js, eventEditor.js

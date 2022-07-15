@@ -2,6 +2,7 @@
 import { getTimezoneAbbre } from './time';
 import { calculateMinutePercentage } from './utility';
 import EventEditor from './eventEditor';
+import Event from './event';
 
 class Tabel {
   constructor(tabelEl) {
@@ -17,17 +18,20 @@ class Tabel {
     // Hold the number of days that are shown on the table
     this.numberOfDaysShown = 0;
 
-    this.eventEditor = new EventEditor(this, this.tabelEl);
+    this.eventEditor = new EventEditor(this);
   }
 
+  // Returns the tabel height
   height() {
     return this.tabelEl.offsetHeight;
   }
 
+  // Returns the tabel width
   width() {
     return this.tabelEl.offsetWidth;
   }
 
+  // Return the DOM element for the tabel
   getTabelEl() {
     return this.tabelEl;
   }
@@ -38,7 +42,7 @@ class Tabel {
 
   // Generate the table header with the days starting from startingTime,
   // this is a helper function for generateEmptyTable
-  generateTableHeader(startingTime, numberOfDays) {
+  #generateTableHeader(startingTime, numberOfDays) {
     // Cloning the starting time
     const time = this.moment(startingTime);
 
@@ -68,7 +72,7 @@ class Tabel {
 
   // Generate the table body with the days starting from startingTime,
   // this is a helper function for generateEmptyTable
-  generateTableBody(startingTime, numberOfDays) {
+  #generateTableBody(startingTime, numberOfDays) {
     // Cloning the starting time, and putting starting hour, minute and second to zero
     const time = this.moment(startingTime)
       .set('hour', 0)
@@ -115,7 +119,14 @@ class Tabel {
               .add(j, 'hour')
               .minutes(minutePresentage * 60)
               .valueOf();
-            this.eventEditor.showEventEditor(tabelCell, null, timestamp);
+
+            const event = new Event(
+              this,
+              this.eventEditor,
+              tabelCell,
+              timestamp
+            );
+            this.eventEditor.showEventEditor(event);
           });
         }
       }
@@ -129,14 +140,14 @@ class Tabel {
     this.numberOfDaysShown = numberOfDays;
 
     this.tabelHeader.innerHTML = '';
-    this.generateTableHeader(startingTime, numberOfDays);
+    this.#generateTableHeader(startingTime, numberOfDays);
 
     this.tabelBody.innerHTML = '';
-    this.generateTableBody(startingTime, numberOfDays);
+    this.#generateTableBody(startingTime, numberOfDays);
   }
 
-  // Returns the cell that is showing the given timestamp,
-  // returns null if the timestamp is outside the tabell
+  // Returns the cell that is showing the given timestamp, returns null if the
+  // timestamp is outside the tabell
   getCellParent(timestamp) {
     const startDate = this.moment(this.currentTimestamp),
       endDate = this.moment(timestamp);
