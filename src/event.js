@@ -12,6 +12,7 @@ class Event {
     table,
     eventEditor,
     parentEl,
+    storageHandler,
     startTimestamp,
     endTimestamp = null,
     title = '',
@@ -22,6 +23,7 @@ class Event {
     this.moment = require('moment');
     this.table = table;
     this.eventEditor = eventEditor;
+    this.storageHandler = storageHandler;
 
     // The DOM event element, it will changes its value in #initDOM function
     this.eventEl = null;
@@ -131,6 +133,7 @@ class Event {
 
     // The function that execute while the user is holding the mouse button
     const resizeEventFunction = () => {
+      this.eventEditor.showEventEditor(this);
       let difference = mousePosition.currentY - mousePosition.lastUpdatedY;
 
       // Too small change
@@ -164,8 +167,13 @@ class Event {
       // Updating the position
       mousePosition.lastUpdatedY = mousePosition.currentY - difference;
 
+      if (!this.isPlaceholder) {
+        this.storageHandler.updateEvent(this);
+      }
+
       // Updating the object attribute and the event time
       this.eventEl.setAttribute('end-time', this.endTimestamp);
+
       this.eventEditor.updateEventEditorTimes();
     };
 
@@ -181,10 +189,14 @@ class Event {
 
     resizeBoxEl.addEventListener('click', (e) => e.stopPropagation());
 
+    // Indicate if the event editor was hidden at the start of editing
+    let wasEditorHidden;
+
     // When the resize begin we update the positions and start an interval, and
     // update the resize box height
     resizeBoxEl.addEventListener('mousedown', (e) => {
       e.stopPropagation();
+      wasEditorHidden = this.eventEditor.isEditorHidden();
       if (interval) clearInterval(interval);
       mousePosition.lastUpdatedY =
         e.clientY - this.eventEl.getBoundingClientRect().top;
@@ -205,6 +217,10 @@ class Event {
       if (interval) {
         clearInterval(interval);
         interval = null;
+      }
+
+      if (wasEditorHidden) {
+        this.eventEditor.hideEditor();
       }
     };
 
@@ -300,6 +316,10 @@ class Event {
           this.eventEl.remove();
         }
         mousePosition.lastUpdatedY += cellHeight * 0.25;
+      }
+
+      if (!this.isPlaceholder) {
+        this.storageHandler.updateEvent(this);
       }
 
       this.eventEl.setAttribute('start-time', this.startTimestamp);

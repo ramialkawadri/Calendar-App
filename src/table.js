@@ -125,6 +125,7 @@ class Table {
               this,
               this.eventEditor,
               tableCell,
+              this.storageHandler,
               timestamp
             );
             this.eventEditor.showEventEditor(event);
@@ -140,8 +141,25 @@ class Table {
     if (startingTime === null) startingTime = moment();
     startingTime = startingTime.hours(0).minutes(0).seconds(0).milliseconds(0);
 
+    switch (numberOfDays) {
+      case 7:
+        this.tableEl.classList.add('week');
+        this.tableEl.classList.remove('four');
+        this.tableEl.classList.remove('day');
+        break;
+      case 4:
+        this.tableEl.classList.add('four');
+        this.tableEl.classList.remove('week');
+        this.tableEl.classList.remove('day');
+        break;
+      case 1:
+        this.tableEl.classList.add('day');
+        this.tableEl.classList.remove('four');
+        this.tableEl.classList.remove('week');
+        break;
+    }
+
     this.currentTimestamp = startingTime.valueOf();
-    console.log(this.currentTimestamp);
     this.numberOfDaysShown = numberOfDays;
 
     this.tableHeader.innerHTML = '';
@@ -170,6 +188,7 @@ class Table {
         this,
         this.eventEditor,
         this.getCellParent(e.startTimestamp),
+        this.storageHandler,
         e.startTimestamp,
         e.endTimestamp,
         e.title,
@@ -178,7 +197,6 @@ class Table {
         e.id
       );
     });
-    console.log(events);
   }
 
   // Returns the cell that is showing the given timestamp, returns null if the
@@ -200,6 +218,38 @@ class Table {
         this.moment(timestamp).hours()
       ];
     return tableCell;
+  }
+
+  // Show the table for the current day
+  today() {
+    this.generateEmptyTable(null, this.numberOfDaysShown);
+  }
+
+  // Show the previous week, 4 days or day depending on the number of days shown
+  previous() {
+    const startTime = moment(this.currentTimestamp).subtract(
+      this.numberOfDaysShown,
+      'days'
+    );
+    this.generateEmptyTable(startTime, this.numberOfDaysShown);
+  }
+
+  // Show the next week, 4 days or day depending on the number of days shown
+  next() {
+    const startTime = moment(this.currentTimestamp).add(
+      this.numberOfDaysShown,
+      'days'
+    );
+    this.generateEmptyTable(startTime, this.numberOfDaysShown);
+  }
+
+  // Return the name of the month
+  getCurrentMonthName() {
+    return moment(this.currentTimestamp).format('MMMM');
+  }
+
+  getCurrentYear() {
+    return moment(this.currentTimestamp).format('YYYY');
   }
 }
 

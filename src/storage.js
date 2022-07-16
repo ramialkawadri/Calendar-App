@@ -9,8 +9,6 @@ class StorageHandler {
     if (loadedEvents) {
       this.events = JSON.parse(loadedEvents);
     }
-
-    console.log(this.events);
   }
 
   #saveEvents() {

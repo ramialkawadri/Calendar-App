@@ -15,7 +15,39 @@ const calendar = new Table(
   document.getElementById('calendar-table'),
   storageHandler
 );
-export const getCalendar = () => calendar;
+const getCalendar = () => calendar;
+const currentDate = document.querySelector('.nav__current-date');
+
 calendar.generateEmptyTable();
+currentDate.textContent =
+  calendar.getCurrentMonthName() + ' ' + calendar.getCurrentYear();
+
+document.querySelector('.nav__movement_left').addEventListener('click', () => {
+  calendar.previous();
+  currentDate.textContent =
+    calendar.getCurrentMonthName() + ' ' + calendar.getCurrentYear();
+});
+
+document.querySelector('.nav__movement_right').addEventListener('click', () => {
+  calendar.next();
+  currentDate.textContent =
+    calendar.getCurrentMonthName() + ' ' + calendar.getCurrentYear();
+});
+
+document.querySelector('.nav__today').addEventListener('click', () => {
+  calendar.today();
+  currentDate.textContent =
+    calendar.getCurrentMonthName() + ' ' + calendar.getCurrentYear();
+});
+
+document.querySelector('.nav__number-of-days').value = '7';
+
+document
+  .querySelector('.nav__number-of-days')
+  .addEventListener('change', (e) => {
+    calendar.generateEmptyTable(null, Number(e.target.value));
+  });
+
+export { getCalendar };
 
 console.log('working');
