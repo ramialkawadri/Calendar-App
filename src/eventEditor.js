@@ -1,7 +1,8 @@
 class EventEditor {
-  constructor(table) {
+  constructor(table, storageHandler) {
     this.moment = require('moment');
     this.table = table;
+    this.storageHandler = storageHandler;
 
     // The DOM elements
     this.eventEditorEl = table.getTableDOM().querySelector('#event-editor');
@@ -23,6 +24,9 @@ class EventEditor {
     this.eventEditorEl.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
       if (this.selectedEvent) {
+        if (this.selectedEvent.isPlaceholder)
+          storageHandler.addEvent(this.selectedEvent);
+        else storageHandler.updateEvent(this.selectedEvent);
         this.selectedEvent.isPlaceholder = false;
         this.hideEditor();
       }
@@ -38,6 +42,7 @@ class EventEditor {
         e.stopPropagation();
         if (this.selectedEvent) {
           this.selectedEvent.DOMElement.remove();
+          this.storageHandler.deleteEvent(this.selectedEvent);
           this.hideEditor();
         }
       });
@@ -51,19 +56,9 @@ class EventEditor {
   // inside the text fields
   #updateEventValues() {
     if (this.selectedEvent) {
-      const title = this.titleInputEl.value
-        ? this.titleInputEl.value
-        : '(Unnamed)';
-      this.selectedEvent.DOMElement.querySelector('.title').textContent = title;
-      this.selectedEvent.DOMElement.setAttribute(
-        'title',
-        this.titleInputEl.value
-      );
-
-      const description = this.descriptionInputEl.value;
-      this.selectedEvent.DOMElement.querySelector('.description').textContent =
-        description;
-      this.selectedEvent.DOMElement.setAttribute('description', description);
+      this.selectedEvent.updateEventTitle(this.titleInputEl.value);
+      this.selectedEvent.updateEventDescription(this.descriptionInputEl.value);
+      this.storageHandler.updateEvent(this.selectedEvent);
     }
   }
 

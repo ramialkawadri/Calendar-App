@@ -32,7 +32,7 @@ class Event {
     this.startTimestamp = startTimestamp;
 
     // If no end time stamp is given, the duration of the event will be 1 hour
-    if (!endTimestamp) {
+    if (endTimestamp === null) {
       endTimestamp = this.moment(startTimestamp).add(1, 'hour').valueOf();
     }
     this.endTimestamp = endTimestamp;
@@ -228,8 +228,8 @@ class Event {
 
     const movingFunction = () => {
       // If the changes are less or equal than this nothing happen in any direction
-      const xGapError = cellWidth / 4;
-      const yGapError = cellHeight / 6;
+      const xGapError = cellWidth / 4.0;
+      const yGapError = cellHeight / 6.0;
 
       // Moving left
       while (mousePosition.x < -xGapError) {
@@ -348,6 +348,20 @@ class Event {
 
     this.eventEl.addEventListener('mouseup', endMovingEvent);
     this.eventEl.addEventListener('click', endMovingEvent);
+  }
+
+  updateEventTitle(newTitle) {
+    this.title = newTitle;
+    this.DOMElement.querySelector('.title').textContent = newTitle
+      ? newTitle
+      : '(Unnamed)';
+    this.DOMElement.setAttribute('title', newTitle);
+  }
+
+  updateEventDescription(newDescription) {
+    this.description = newDescription;
+    this.DOMElement.querySelector('.description').textContent = newDescription;
+    this.DOMElement.setAttribute('description', newDescription);
   }
 }
 

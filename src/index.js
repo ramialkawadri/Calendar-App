@@ -8,8 +8,13 @@ import '@fortawesome/fontawesome-free/js/brands';
 
 // Javascript files
 import Table from './table';
+import StorageHandler from './storage';
 
-const calendar = new Table(document.getElementById('calendar-table'));
+const storageHandler = new StorageHandler();
+const calendar = new Table(
+  document.getElementById('calendar-table'),
+  storageHandler
+);
 export const getCalendar = () => calendar;
 calendar.generateEmptyTable();
 

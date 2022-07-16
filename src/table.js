@@ -1,13 +1,15 @@
 //  This file handles the generating of the calendar table and showing it
-import { getTimezoneAbbre } from './time';
+import { addDaysToTimeStamp, getTimezoneAbbre } from './time';
 import { calculateMinutePercentage } from './utility';
 import EventEditor from './eventEditor';
 import Event from './event';
+import moment from 'moment';
 
 class Table {
-  constructor(tableEl, cellHeight = 60) {
+  constructor(tableEl, storageHandler, cellHeight = 60) {
     this.moment = require('moment');
     this.cellHeight = cellHeight; // In pixels
+    this.storageHandler = storageHandler;
     this.tableEl = tableEl;
     this.tableBody = tableEl.querySelector('#calendar__body');
     this.tableHeader = tableEl.querySelector('#calendar__header');
@@ -17,7 +19,7 @@ class Table {
     // Hold the number of days that are shown on the table
     this.numberOfDaysShown = 0;
 
-    this.eventEditor = new EventEditor(this);
+    this.eventEditor = new EventEditor(this, storageHandler);
   }
 
   // Returns the table height
@@ -134,8 +136,12 @@ class Table {
   }
 
   // Generate an empty table and views it
-  generateEmptyTable(startingTime = this.moment(), numberOfDays = 7) {
+  generateEmptyTable(startingTime = null, numberOfDays = 7) {
+    if (startingTime === null) startingTime = moment();
+    startingTime = startingTime.hours(0).minutes(0).seconds(0).milliseconds(0);
+
     this.currentTimestamp = startingTime.valueOf();
+    console.log(this.currentTimestamp);
     this.numberOfDaysShown = numberOfDays;
 
     this.tableHeader.innerHTML = '';
@@ -143,24 +149,56 @@ class Table {
 
     this.tableBody.innerHTML = '';
     this.#generateTableBody(startingTime, numberOfDays);
+
+    this.#showSavedEvents();
+  }
+
+  // Show all saved events that fits into the table
+  #showSavedEvents() {
+    const startTimestamp = this.currentTimestamp;
+    const endTimestamp = addDaysToTimeStamp(
+      this.currentTimestamp,
+      this.numberOfDaysShown
+    );
+
+    const events = this.storageHandler.getAllInRange(
+      startTimestamp,
+      endTimestamp
+    );
+    events.forEach((e) => {
+      new Event(
+        this,
+        this.eventEditor,
+        this.getCellParent(e.startTimestamp),
+        e.startTimestamp,
+        e.endTimestamp,
+        e.title,
+        e.description,
+        false,
+        e.id
+      );
+    });
+    console.log(events);
   }
 
   // Returns the cell that is showing the given timestamp, returns null if the
   // timestamp is outside the table
   getCellParent(timestamp) {
     const startDate = this.moment(this.currentTimestamp),
-      endDate = this.moment(timestamp);
+      endDate = this.moment(timestamp).hours(0).minutes(0).seconds(0);
     const daysDiff = endDate.diff(startDate, 'days') + 1;
 
     // Outside the table
-    if (daysDiff < 0 || daysDiff + 1 > this.numberOfDaysShown) return null;
+    if (daysDiff < 0 || daysDiff > this.numberOfDaysShown) return null;
 
     const tableRow = this.tableEl.querySelectorAll('.calendar__body__row')[
-      daysDiff + 1 // We add 1 because the first row holds the hours
+      daysDiff
     ];
 
     const tableCell =
-      tableRow.querySelectorAll('.calendar__cell')[endDate.hours()];
+      tableRow.querySelectorAll('.calendar__cell')[
+        this.moment(timestamp).hours()
+      ];
     return tableCell;
   }
 }
