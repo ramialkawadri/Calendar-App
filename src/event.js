@@ -52,19 +52,22 @@ class Event {
   // It initialize the DOM for the event, it is called from the constructor
   #initDOM() {
     const eventEl = document.createElement('div');
+    const elementsContainer = document.createElement('div');
     const titleEl = document.createElement('p');
     const descriptionEl = document.createElement('p');
 
     // Fixing the title
     titleEl.classList.add('title');
     titleEl.textContent = this.title ? this.title : '(Unnamed)';
-    eventEl.appendChild(titleEl);
+    elementsContainer.appendChild(titleEl);
 
     // Fixing the description
     descriptionEl.classList.add('description');
     descriptionEl.textContent = this.description;
-    eventEl.appendChild(descriptionEl);
+    elementsContainer.appendChild(descriptionEl);
 
+    elementsContainer.classList.add('event-container');
+    eventEl.appendChild(elementsContainer);
     eventEl.classList.add('event');
 
     // Changing the height and the vertical offset
@@ -91,6 +94,11 @@ class Event {
     this.eventEl = eventEl;
     this.#enableResizeEvents(resizeBoxEl);
     this.#enableMovingEvents();
+
+    this.eventEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.eventEditor.showEventEditor(this);
+    });
   }
 
   // Returns the DOM element for the event
@@ -192,23 +200,39 @@ class Event {
     // Indicate if the event editor was hidden at the start of editing
     let wasEditorHidden;
 
+    const resizeEventStart = () => {
+      wasEditorHidden = this.eventEditor.isEditorHidden();
+      if (interval) clearInterval(interval);
+      resizeBoxEl.style.height = resizeBoxResizeHeight;
+      interval = setInterval(resizeEventFunction, intervalPeriod);
+    };
+
     // When the resize begin we update the positions and start an interval, and
     // update the resize box height
     resizeBoxEl.addEventListener('mousedown', (e) => {
       e.stopPropagation();
-      wasEditorHidden = this.eventEditor.isEditorHidden();
-      if (interval) clearInterval(interval);
       mousePosition.lastUpdatedY =
         e.clientY - this.eventEl.getBoundingClientRect().top;
       mousePosition.currentY = mousePosition.lastUpdatedY;
-      resizeBoxEl.style.height = resizeBoxResizeHeight;
-      interval = setInterval(resizeEventFunction, intervalPeriod);
+      resizeEventStart();
+    });
+
+    resizeBoxEl.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+      mousePosition.lastUpdatedY =
+        e.touches[0].clientY - this.eventEl.getBoundingClientRect().top;
+      mousePosition.currentY = mousePosition.lastUpdatedY;
+      resizeEventStart();
     });
 
     // Updates the mouse position
     resizeBoxEl.addEventListener('mousemove', (e) => {
       mousePosition.currentY =
         e.clientY - this.eventEl.getBoundingClientRect().top;
+    });
+    resizeBoxEl.addEventListener('touchmove', (e) => {
+      mousePosition.currentY =
+        e.touches[0].clientY - this.eventEl.getBoundingClientRect().top;
     });
 
     // Stops the resize function
@@ -224,8 +248,11 @@ class Event {
       }
     };
 
-    resizeBoxEl.addEventListener('mouseup', stopInterval);
-    resizeBoxEl.addEventListener('mouseleave', stopInterval);
+    ['mouseup', 'mouseleave', 'mouseout', 'touchend', 'touchcancel'].forEach(
+      (name) => {
+        resizeBoxEl.addEventListener(name, stopInterval.bind(this));
+      }
+    );
   }
 
   #enableMovingEvents() {
@@ -244,7 +271,7 @@ class Event {
 
     const movingFunction = () => {
       // If the changes are less or equal than this nothing happen in any direction
-      const xGapError = cellWidth / 4.0;
+      const xGapError = cellWidth / 2.0;
       const yGapError = cellHeight / 6.0;
 
       // Moving left
@@ -330,25 +357,42 @@ class Event {
     let interval;
 
     // Indicates if the editor was hidden or not
-    let wasEditorHidden;
+    let wasEditorHidden = false;
 
-    // Starts the movement
-    this.eventEl.addEventListener('mousedown', (e) => {
+    const movingStart = () => {
       this.eventEl.style.cursor = 'move';
       wasEditorHidden = this.eventEditor.isEditorHidden();
       this.eventEditor.hideEditorVisually();
-      mousePosition.lastUpdatedY = e.clientY;
-      mousePosition.y = mousePosition.lastUpdatedY;
       hasMoved = false;
-
       // Making sure to not start multiple intervals
       if (interval) clearInterval(interval);
       interval = setInterval(movingFunction, movingEventTime);
+    };
+
+    // Starts the movement
+    this.eventEl.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      movingStart();
+      mousePosition.lastUpdatedY = e.clientY;
+      mousePosition.y = mousePosition.lastUpdatedY;
+    });
+
+    this.eventEl.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+      movingStart();
+      mousePosition.lastUpdatedY = e.touches[0].clientY;
+      mousePosition.y = mousePosition.lastUpdatedY;
     });
 
     this.eventEl.addEventListener('mousemove', (e) => {
       mousePosition.y = e.clientY;
       mousePosition.x = e.clientX - this.eventEl.getBoundingClientRect().left;
+    });
+
+    this.eventEl.addEventListener('touchmove', (e) => {
+      mousePosition.y = e.touches[0].clientY;
+      mousePosition.x =
+        e.touches[0].clientX - this.eventEl.getBoundingClientRect().left;
     });
 
     // When the movement ends
@@ -362,12 +406,15 @@ class Event {
 
       // If the user clicked or the event editor was already shown
       if (!hasMoved || !wasEditorHidden) {
-        this.eventEditor.showEventEditor(this);
+        // this.eventEditor.showEventEditor(this);
       } else this.eventEditor.hideEditor();
     };
 
-    this.eventEl.addEventListener('mouseup', endMovingEvent);
-    this.eventEl.addEventListener('click', endMovingEvent);
+    ['mouseup', 'mouseleave', 'mouseout', 'touchend', 'touchcancel'].forEach(
+      (name) => {
+        this.eventEl.addEventListener(name, endMovingEvent.bind(this));
+      }
+    );
   }
 
   updateEventTitle(newTitle) {

@@ -10,6 +10,8 @@ import '@fortawesome/fontawesome-free/js/brands';
 import Table from './table';
 import StorageHandler from './storage';
 
+const moment = require('moment');
+
 const storageHandler = new StorageHandler();
 const calendar = new Table(
   document.getElementById('calendar-table'),
@@ -45,7 +47,10 @@ document.querySelector('.nav__number-of-days').value = '7';
 document
   .querySelector('.nav__number-of-days')
   .addEventListener('change', (e) => {
-    calendar.generateEmptyTable(null, Number(e.target.value));
+    calendar.generateEmptyTable(
+      moment(calendar.currentTimestamp),
+      Number(e.target.value)
+    );
   });
 
 export { getCalendar };
