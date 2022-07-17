@@ -271,7 +271,7 @@ class Event {
 
     const movingFunction = () => {
       // If the changes are less or equal than this nothing happen in any direction
-      const xGapError = cellWidth / 2.0;
+      const xGapError = cellWidth / 6.0;
       const yGapError = cellHeight / 6.0;
 
       // Moving left
