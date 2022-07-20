@@ -136,21 +136,14 @@ class EventEditor {
 
   // Update the text fields values
   #updateFormValues() {
-    this.titleInputEl.value =
-      this.selectedEvent.DOMElement.getAttribute('title');
-    this.descriptionInputEl.value =
-      this.selectedEvent.DOMElement.getAttribute('description');
+    this.titleInputEl.value = this.selectedEvent.title;
+    this.descriptionInputEl.value = this.selectedEvent.description;
   }
 
   // Updates the time from the selected event
   updateEventEditorTimes() {
-    const startTimestamp = Number(
-      this.selectedEvent.DOMElement.getAttribute('start-time')
-    );
-    const endTimestamp = Number(
-      this.selectedEvent.DOMElement.getAttribute('end-time')
-    );
-
+    const startTimestamp = this.selectedEvent.startTimestamp;
+    const endTimestamp = this.selectedEvent.endTimestamp;
     const timeFormat = 'ddd, DD, MMM HH:mm';
     this.eventEditorEl.querySelector('.from').textContent =
       this.moment(startTimestamp).format(timeFormat);

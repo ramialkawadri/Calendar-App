@@ -270,8 +270,11 @@ class Event {
       cellHeight = this.table.getCellHeight();
 
     const movingFunction = () => {
+      // Removing text selections so it doesn't interfere with the moving
+      window.getSelection().removeAllRanges();
+
       // If the changes are less or equal than this nothing happen in any direction
-      const xGapError = cellWidth / 6.0;
+      const xGapError = cellWidth / 2.0;
       const yGapError = cellHeight / 6.0;
 
       // Moving left
@@ -280,15 +283,8 @@ class Event {
         this.startTimestamp = subtractDaysFromTimeStamp(this.startTimestamp, 1);
         this.endTimestamp = subtractDaysFromTimeStamp(this.endTimestamp, 1);
 
-        const parentCell = this.table.getCellParent(this.startTimestamp);
-        if (parentCell) {
-          parentCell.appendChild(this.eventEl);
-          this.parentEl = parentCell;
-          mousePosition.x += cellWidth;
-        } else {
-          this.eventEl.remove();
-          break;
-        }
+        if (!this.#updateParentCell()) break;
+        mousePosition.x += cellWidth;
       }
 
       // Moving right
@@ -297,15 +293,8 @@ class Event {
         this.startTimestamp = addDaysToTimeStamp(this.startTimestamp, 1);
         this.endTimestamp = addDaysToTimeStamp(this.endTimestamp, 1);
 
-        const parentCell = this.table.getCellParent(this.startTimestamp);
-        if (parentCell) {
-          parentCell.appendChild(this.eventEl);
-          this.parentEl = parentCell;
-          mousePosition.x -= cellWidth;
-        } else {
-          this.eventEl.remove();
-          break;
-        }
+        if (!this.#updateParentCell()) break;
+        mousePosition.x -= cellWidth;
       }
 
       // Moving up, 15 minutes at the time
@@ -317,14 +306,7 @@ class Event {
         );
         this.endTimestamp = subtractMinutesFromTimestamp(this.endTimestamp, 15);
 
-        const parentCell = this.table.getCellParent(this.startTimestamp);
-        if (parentCell) {
-          parentCell.appendChild(this.eventEl);
-          this.parentEl = parentCell;
-          this.eventEl.style.top = `${this.#verticalOffset}px`;
-        } else {
-          this.eventEl.remove();
-        }
+        if (!this.#updateParentCell()) break;
         mousePosition.lastUpdatedY -= cellHeight * 0.25;
       }
 
@@ -334,14 +316,7 @@ class Event {
         this.startTimestamp = addMinutesToTimestamp(this.startTimestamp, 15);
         this.endTimestamp = addMinutesToTimestamp(this.endTimestamp, 15);
 
-        const parentCell = this.table.getCellParent(this.startTimestamp);
-        if (parentCell) {
-          parentCell.appendChild(this.eventEl);
-          this.parentEl = parentCell;
-          this.eventEl.style.top = `${this.#verticalOffset}px`;
-        } else {
-          this.eventEl.remove();
-        }
+        if (!this.#updateParentCell()) break;
         mousePosition.lastUpdatedY += cellHeight * 0.25;
       }
 
@@ -353,6 +328,7 @@ class Event {
       this.eventEl.setAttribute('end-time', this.endTimestamp);
     };
 
+    // How often we run the interval
     const movingEventTime = 0;
     let interval;
 
@@ -405,16 +381,28 @@ class Event {
       }
 
       // If the user clicked or the event editor was already shown
-      if (!hasMoved || !wasEditorHidden) {
-        // this.eventEditor.showEventEditor(this);
-      } else this.eventEditor.hideEditor();
+      if (hasMoved && wasEditorHidden) {
+        this.eventEditor.hideEditor();
+      }
     };
 
     ['mouseup', 'mouseleave', 'mouseout', 'touchend', 'touchcancel'].forEach(
-      (name) => {
-        this.eventEl.addEventListener(name, endMovingEvent.bind(this));
-      }
+      (name) => this.eventEl.addEventListener(name, endMovingEvent.bind(this))
     );
+  }
+
+  // Updates the parent cell and returns it
+  #updateParentCell() {
+    const parentCell = this.table.getCellParent(this.startTimestamp);
+    if (parentCell) {
+      parentCell.appendChild(this.eventEl);
+      this.parentEl = parentCell;
+      this.eventEl.style.top = `${this.#verticalOffset}px`;
+    } else {
+      this.eventEl.classList.add('hidden');
+    }
+
+    return parentCell;
   }
 
   updateEventTitle(newTitle) {
