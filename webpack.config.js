@@ -1,11 +1,11 @@
 const path = require('path');
 
 module.exports = {
-  entry: ['babel-polyfill', './src/index.js'],
+  entry: { index: ['babel-polyfill', './src/index.js'] },
   output: {
     path: path.resolve(__dirname, 'public/scripts'),
     publicPath: '/public/scripts/',
-    filename: 'bundle.js',
+    filename: '[name].js',
   },
   module: {
     rules: [
@@ -19,6 +19,10 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.s[ac]ss$/i,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
     ],
   },
   devtool: 'source-map',
@@ -26,5 +30,6 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
+    open: true,
   },
 };

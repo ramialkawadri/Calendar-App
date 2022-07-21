@@ -1,5 +1,8 @@
 // This is the main JS file that will run first
 
+// Sass files
+import '../styles/general.scss';
+
 // Fontawesome
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';

@@ -1,36 +1,16 @@
 /*
---------- Typography
+- Typography
 - Font weights: 400, 700
 - FONT SIZE SYSTEM (px)
 10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
---------- Whitespace
 - SPACING SYSTEM (px)
 2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
---------- Colors
-https://www.materialpalette.com/ -> choose blue and red
 */
 
-/*------------------------
-      Variables
--------------------------- */
-:root {
-  --primary-color: #2196f3;
-  --dark-primary-color: #1976d2;
-  --darkest-primary-color: #1760a9;
-  --secondary-color: #ff5252;
-  --primary-text-color: #212121;
-  --secondary-text-color: #686767;
-  --light-text: #fff;
-  --divider-color: #bdbdbd;
-  --divider-color-rgb: 189, 189, 189;
-  --light-grey: #f6f6f6;
+// Variables
+@import 'variables';
 
-  --calendar-cells-border: 1px solid rgba(var(--divider-color-rgb), 0.3);
-}
-
-/*------------------------
-      Default styles
--------------------------- */
+// Default styles
 * {
   margin: 0;
   padding: 0;
@@ -40,7 +20,7 @@ https://www.materialpalette.com/ -> choose blue and red
 }
 
 *:focus {
-  outline-color: var(--darkest-primary-color);
+  outline-color: $darkest-primary-color;
 }
 
 html {
@@ -50,7 +30,7 @@ html {
 
 body {
   font-family: 'Roboto', sans-serif;
-  color: var(--primary-text-color);
+  color: $primary-text-color;
 }
 
 input[type='text'],
@@ -58,19 +38,17 @@ select {
   padding: 0.8rem 1.2rem;
   font-size: 1.2rem;
   letter-spacing: 0.5px;
-  border: 1px solid var(--divider-color);
+  border: 1px solid $divider-color;
   border-radius: 3px;
   transition: all 0.3s;
 }
 
 select {
   cursor: pointer;
-  background-color: var(--light-text);
+  background-color: $light-text;
 }
 
-/*------------------------
-      General classes
--------------------------- */
+// General classes
 .hidden {
   display: none;
 }
@@ -104,13 +82,16 @@ select {
 .button--primary,
 .button--primary:link,
 .button--primary:visited {
-  background-color: var(--primary-color);
-  color: var(--light-text);
+  background-color: $primary-color;
+  color: $light-text;
 }
 
 .button--secondary,
 .button--secondary:link,
 .button--secondary:visited {
-  background-color: var(--secondary-color);
-  color: var(--light-text);
+  background-color: $secondary-color;
+  color: $light-text;
 }
+
+@import 'style.scss';
+@import 'responsive.scss';
