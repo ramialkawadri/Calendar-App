@@ -8,7 +8,7 @@
 */
 
 // Variables
-@import 'variables';
+@use 'utils/variables';
 
 // Default styles
 * {
@@ -20,7 +20,7 @@
 }
 
 *:focus {
-  outline-color: $darkest-primary-color;
+  outline-color: variables.$darkest-primary-color;
 }
 
 html {
@@ -30,7 +30,7 @@ html {
 
 body {
   font-family: 'Roboto', sans-serif;
-  color: $primary-text-color;
+  color: variables.$primary-text-color;
 }
 
 input[type='text'],
@@ -38,14 +38,14 @@ select {
   padding: 0.8rem 1.2rem;
   font-size: 1.2rem;
   letter-spacing: 0.5px;
-  border: 1px solid $divider-color;
+  border: 1px solid variables.$divider-color;
   border-radius: 3px;
   transition: all 0.3s;
 }
 
 select {
   cursor: pointer;
-  background-color: $light-text;
+  background-color: variables.$light-text;
 }
 
 // General classes
@@ -53,44 +53,46 @@ select {
   display: none;
 }
 
-.button,
-.button:link,
-.button:visited {
-  padding: 0.8rem 1.6rem;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  background-color: transparent;
-  transition: all 0.3s ease-in-out;
+.button {
+  &,
+  &:link,
+  &:visited {
+    padding: 0.8rem 1.6rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: transparent;
+    transition: all 0.3s ease-in-out;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-}
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+  }
 
-.button:hover,
-.button:link:hover,
-.button:visited:hover,
-.button:active,
-.button:link:active,
-.button:visited:active {
-  opacity: 0.95;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-}
+  &:hover,
+  &:link:hover,
+  &:visited:hover,
+  &:active,
+  &:link:active,
+  &:visited:active {
+    opacity: 0.9;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  }
 
-.button--primary,
-.button--primary:link,
-.button--primary:visited {
-  background-color: $primary-color;
-  color: $light-text;
-}
+  &--primary,
+  &--primary:link,
+  &--primary:visited {
+    background-color: variables.$primary-color;
+    color: variables.$light-text;
+  }
 
-.button--secondary,
-.button--secondary:link,
-.button--secondary:visited {
-  background-color: $secondary-color;
-  color: $light-text;
+  &--secondary,
+  &--secondary:link,
+  &--secondary:visited {
+    background-color: variables.$secondary-color;
+    color: variables.$light-text;
+  }
 }
 
 @import 'style.scss';

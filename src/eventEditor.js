@@ -5,10 +5,11 @@ class EventEditor {
     this.storageHandler = storageHandler;
 
     // The DOM elements
-    this.eventEditorEl = table.getTableDOM().querySelector('#event-editor');
-    this.titleInputEl = this.eventEditorEl.querySelector('#event-name');
+    this.eventEditorEl = this.#initDOM();
+    table.getTableDOM().appendChild(this.eventEditorEl);
+    this.titleInputEl = this.eventEditorEl.querySelector('.event-name');
     this.descriptionInputEl =
-      this.eventEditorEl.querySelector('#event-description');
+      this.eventEditorEl.querySelector('.event-description');
 
     // The selected event object and element
     this.selectedEvent = null;
@@ -46,6 +47,52 @@ class EventEditor {
           this.hideEditor();
         }
       });
+  }
+
+  // Initialize the DOM element for the event editor, called in constructor
+  #initDOM() {
+    const domElement = document.createElement('div');
+    domElement.classList.add('event-editor', 'hidden');
+
+    domElement.innerHTML = `
+        <div class="event-header">
+          <p class="editor-title">Add an event</p>
+          <button class="exit-button">
+            <i class="fa-solid fa-circle-xmark exit"></i>
+          </button>
+        </div>
+
+        <div class="event-form__container">
+          <div class="time">
+            <p>From <span class="from"></span></p>
+            <p>To <span class="to"></span></p>
+          </div>
+          <form>
+            <input
+              type="text"
+              class="event-name"
+              name="eventName"
+              placeholder="Add a title"
+            />
+            <input
+              type="text"
+              class="event-description"
+              name="eventDescription"
+              placeholder="Add a description"
+            />
+            <div class="buttons">
+              <div role="button" class="button button--secondary delete-button">
+                <i class="fa-solid fa-trash-can"></i> Delete
+              </div>
+              <button class="button button--primary">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Submit
+              </button>
+            </div>
+          </form>
+        </div>
+    `;
+
+    return domElement;
   }
 
   isEditorHidden() {

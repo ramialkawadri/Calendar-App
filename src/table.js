@@ -11,8 +11,14 @@ class Table {
     this.cellHeight = cellHeight; // In pixels
     this.storageHandler = storageHandler;
     this.tableEl = tableEl;
-    this.tableBody = tableEl.querySelector('#calendar__body');
-    this.tableHeader = tableEl.querySelector('#calendar__header');
+
+    this.tableHeader = document.createElement('div');
+    this.tableHeader.classList.add('calendar__header');
+    this.tableEl.appendChild(this.tableHeader);
+
+    this.tableBody = document.createElement('div');
+    this.tableBody.classList.add('calendar__body');
+    this.tableEl.appendChild(this.tableBody);
 
     // The timestamp that the table begins with
     this.currentTimestamp = 0;
@@ -138,7 +144,7 @@ class Table {
 
   // Generate an empty table and views it
   generateEmptyTable(startingTime = null, numberOfDays = 7) {
-    if (startingTime === null) startingTime = moment();
+    startingTime ??= moment();
     startingTime = startingTime.hours(0).minutes(0).seconds(0).milliseconds(0);
 
     switch (numberOfDays) {

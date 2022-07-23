@@ -34,9 +34,7 @@ class Event {
     this.startTimestamp = startTimestamp;
 
     // If no end time stamp is given, the duration of the event will be 1 hour
-    if (endTimestamp === null) {
-      endTimestamp = this.moment(startTimestamp).add(1, 'hour').valueOf();
-    }
+    endTimestamp ??= this.moment(startTimestamp).add(1, 'hour').valueOf();
     this.endTimestamp = endTimestamp;
     this.title = title;
     this.description = description;

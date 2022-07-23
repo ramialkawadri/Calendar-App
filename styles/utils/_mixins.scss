@@ -1,0 +1,10 @@
+@mixin padding-horizontal($left, $right: $left) {
+  padding-left: $left;
+  padding-right: $right;
+}
+
+@mixin center-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

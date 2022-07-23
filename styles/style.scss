@@ -1,21 +1,23 @@
-@import 'variables';
+@use 'utils/variables';
+@use 'utils/mixins';
+@use 'utils/animations';
 
 // Navigation
 nav {
   padding: 1.6rem 3.2rem;
   font-size: 1.6rem;
-  border-bottom: 1px solid rgba($divider-color, 0.6);
+  border-bottom: 1px solid rgba(variables.$divider-color, 0.6);
 
   display: flex;
   align-items: center;
   gap: 3.2rem;
 
-  &__logo {
+  .nav__logo {
     display: flex;
     align-items: center;
 
     &_image {
-      color: $primary-color;
+      color: variables.$primary-color;
       font-size: 2.4rem;
     }
 
@@ -25,63 +27,60 @@ nav {
   }
 
   .nav__movement .button {
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
+    @include mixins.padding-horizontal(0.8rem);
   }
 }
 
 // Calendar table
-#calendar-table {
+.calendar-table {
   font-size: 1.2rem;
   position: relative;
 
-  &.week #calendar__header,
-  &.week #calendar__body {
+  &.week .calendar__header,
+  &.week .calendar__body {
     grid-template-columns: 5rem repeat(7, 1fr);
   }
 
-  &.four #calendar__header,
-  &.four #calendar__body {
+  &.four .calendar__header,
+  &.four .calendar__body {
     grid-template-columns: 5rem repeat(4, 1fr);
   }
 
-  &.day #calendar__header,
-  &.day #calendar__body {
+  &.day .calendar__header,
+  &.day .calendar__body {
     grid-template-columns: 5rem 1fr;
   }
 
-  #calendar__header,
-  #calendar__body {
+  .calendar__header,
+  .calendar__body {
     display: grid;
     align-items: stretch;
   }
 
   // Calendar header
-  #calendar__header {
-    border-bottom: $calendar-cells-border;
+  .calendar__header {
+    border-bottom: variables.$calendar-cells-border;
     padding: 1.2rem 2.4rem;
     padding-right: 0;
 
     position: sticky;
     top: 0;
-    background-color: $light-text;
+    background-color: variables.$light-text;
     z-index: 9;
 
     div {
-      display: flex;
+      @include mixins.center-flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
       gap: 0.4rem;
     }
 
     div:not(:last-child) {
-      border-right: $calendar-cells-border;
+      border-right: variables.$calendar-cells-border;
     }
   }
 
   // Calendar body
-  #calendar__body {
+  .calendar__body {
     padding-left: 2.4rem;
     position: relative;
     overflow: hidden;
@@ -92,15 +91,13 @@ nav {
 
       .calendar__hour {
         padding-right: 0.8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include mixins.center-flex;
       }
     }
 
     .calendar__cell {
-      border-left: $calendar-cells-border;
-      border-bottom: $calendar-cells-border;
+      border-left: variables.$calendar-cells-border;
+      border-bottom: variables.$calendar-cells-border;
       cursor: pointer;
       position: relative;
     }
@@ -108,14 +105,14 @@ nav {
 }
 
 //  Event editor
-#event-editor {
+.event-editor {
   position: absolute;
-  background-color: $light-text;
+  background-color: variables.$light-text;
   top: 0;
   left: 0;
   z-index: 3;
 
-  box-shadow: 0 0 18px rgba($divider-color, 0.75);
+  box-shadow: 0 0 18px rgba(variables.$divider-color, 0.75);
   min-width: 30rem;
   animation: fade-right 0.35s ease-out;
 
@@ -125,8 +122,8 @@ nav {
 
     font-size: 1.6rem;
     padding: 1.2rem 1.6rem;
-    background-color: $dark-primary-color;
-    color: $light-text;
+    background-color: variables.$dark-primary-color;
+    color: variables.$light-text;
 
     .exit-button {
       background-color: transparent;
@@ -164,18 +161,6 @@ nav {
   }
 }
 
-@keyframes fade-right {
-  from {
-    transform: translateX(-5%);
-    opacity: 0.5;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
 // Events
 .event {
   position: relative;
@@ -186,8 +171,8 @@ nav {
   position: absolute;
   left: 6px;
   right: 6px;
-  background-color: $primary-color;
-  color: $light-text;
+  background-color: variables.$primary-color;
+  color: variables.$light-text;
   touch-action: none;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
 
@@ -211,7 +196,7 @@ nav {
   }
 
   .description {
-    color: $light-grey;
+    color: variables.$light-grey;
     margin-top: 0.4rem;
   }
 
