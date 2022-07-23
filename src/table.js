@@ -1,5 +1,5 @@
 //  This file handles the generating of the calendar table and showing it
-import { addDaysToTimeStamp, getTimezoneAbbre } from './time';
+import { addDaysToTimeStamp, getTimezoneAbbre, daysBetween } from './time';
 import { calculateMinutePercentage } from './utility';
 import EventEditor from './eventEditor';
 import Event from './event';
@@ -208,9 +208,7 @@ class Table {
   // Returns the cell that is showing the given timestamp, returns null if the
   // timestamp is outside the table
   getCellParent(timestamp) {
-    const startDate = this.moment(this.currentTimestamp),
-      endDate = this.moment(timestamp).hours(0).minutes(0).seconds(0);
-    const daysDiff = endDate.diff(startDate, 'days') + 1;
+    const daysDiff = daysBetween(this.currentTimestamp, timestamp) + 1;
 
     // Outside the table
     if (daysDiff < 0 || daysDiff > this.numberOfDaysShown) return null;

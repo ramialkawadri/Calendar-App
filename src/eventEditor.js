@@ -1,3 +1,5 @@
+import { addMinutesToTimestamp } from './time';
+
 class EventEditor {
   constructor(table, storageHandler) {
     this.moment = require('moment');
@@ -7,9 +9,35 @@ class EventEditor {
     // The DOM elements
     this.eventEditorEl = this.#initDOM();
     table.getTableDOM().appendChild(this.eventEditorEl);
+
     this.titleInputEl = this.eventEditorEl.querySelector('.event-name');
     this.descriptionInputEl =
       this.eventEditorEl.querySelector('.event-description');
+
+    // The time pickers for the event editor
+    this.fromDateInputEl = this.eventEditorEl.querySelector('.from-date');
+    this.fromTimeInputEl = this.eventEditorEl.querySelector('.from-time');
+    this.toDateInputEl = this.eventEditorEl.querySelector('.to-date');
+    this.toTimeInputEl = this.eventEditorEl.querySelector('.to-time');
+
+    // We add the events for the date pickers
+    this.fromDateInputEl.addEventListener(
+      'change',
+      this.#fromInputChangeEvent.bind(this)
+    );
+    this.fromTimeInputEl.addEventListener(
+      'change',
+      this.#fromInputChangeEvent.bind(this)
+    );
+
+    this.toDateInputEl.addEventListener(
+      'change',
+      this.#toInputChangeEvent.bind(this)
+    );
+    this.toTimeInputEl.addEventListener(
+      'change',
+      this.#toInputChangeEvent.bind(this)
+    );
 
     // The selected event object and element
     this.selectedEvent = null;
@@ -64,8 +92,28 @@ class EventEditor {
 
         <div class="event-form__container">
           <div class="time">
-            <p>From <span class="from"></span></p>
-            <p>To <span class="to"></span></p>
+            <div>
+              <p>From:</p>
+              <label for="from-date"> 
+                <i class="fa-solid fa-calendar-days"></i>
+                <input type="date" class="from-date" id="from-date"></input>
+              </label>
+              <label for="from-time">
+                <i class="fa-solid fa-clock"></i> 
+                <input type="time" class="from-time" id="from-time"></input>
+              </label>
+            </div>
+            <div>
+              <p>To:</p>
+              <label for="to-date">
+                <i class="fa-solid fa-calendar-days"></i>
+                <input type="date" class="to-date" id="to-date"></input>
+              </label>
+              <label for="to-time">
+                <i class="fa-solid fa-clock"></i> 
+                <input type="time" class="to-time" id="to-time"></input>
+              </label>
+            </div>
           </div>
           <form>
             <input
@@ -93,6 +141,39 @@ class EventEditor {
     `;
 
     return domElement;
+  }
+
+  // This method will fire when we change the start time from the date pickers
+  // it also changes the end time stamp value
+  #fromInputChangeEvent() {
+    // Calculating differences
+    const oldTime = this.moment(this.selectedEvent.startTimestamp);
+    const newTime = this.moment(
+      `${this.fromDateInputEl.value} ${this.fromTimeInputEl.value}`
+    );
+
+    const startTimestamp = newTime.valueOf();
+    const endTimestamp = addMinutesToTimestamp(
+      this.selectedEvent.endTimestamp,
+      newTime.diff(oldTime, 'minutes')
+    );
+
+    this.selectedEvent.updateEventTimes(startTimestamp, endTimestamp);
+    this.updateEventEditorTimes();
+    this.storageHandler.updateEvent(this.selectedEvent);
+  }
+
+  // This method will fire when we change the end time from the date pickers
+  #toInputChangeEvent() {
+    const endTimestamp = this.moment(
+      `${this.toDateInputEl.value} ${this.toTimeInputEl.value}`
+    ).valueOf();
+    this.selectedEvent.updateEventTimes(
+      this.selectedEvent.startTimestamp,
+      endTimestamp
+    );
+    this.updateEventEditorTimes();
+    this.storageHandler.updateEvent(this.selectedEvent);
   }
 
   isEditorHidden() {
@@ -191,12 +272,16 @@ class EventEditor {
   updateEventEditorTimes() {
     const startTimestamp = this.selectedEvent.startTimestamp;
     const endTimestamp = this.selectedEvent.endTimestamp;
-    const timeFormat = 'ddd, DD, MMM HH:mm';
-    this.eventEditorEl.querySelector('.from').textContent =
-      this.moment(startTimestamp).format(timeFormat);
+    const dateFormat = 'YYYY-MM-DD';
+    const timeFormat = 'HH:mm';
+    const startTime = this.moment(startTimestamp);
+    const endTime = this.moment(endTimestamp);
 
-    this.eventEditorEl.querySelector('.to').textContent =
-      this.moment(endTimestamp).format(timeFormat);
+    this.fromDateInputEl.value = startTime.format(dateFormat);
+    this.fromTimeInputEl.value = startTime.format(timeFormat);
+
+    this.toDateInputEl.value = endTime.format(dateFormat);
+    this.toTimeInputEl.value = endTime.format(timeFormat);
   }
 }
 

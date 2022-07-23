@@ -150,8 +150,21 @@ nav {
 
   .time {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 1.2rem;
     margin-bottom: 1.2rem;
+
+    & > div {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: end;
+
+      svg {
+        color: variables.$secondary-text-color;
+        margin-right: 0.4rem;
+      }
+    }
   }
 
   form {

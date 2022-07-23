@@ -21,6 +21,10 @@ const addMinutesToTimestamp = (timestamp, minutes) =>
 const subtractMinutesFromTimestamp = (timestamp, minutes) =>
   timestamp - minutes * 60000;
 
+// Return the number of days between two dates
+const daysBetween = (startTimestamp, endTimestamp) =>
+  Math.floor((endTimestamp - startTimestamp) / 86400000);
+
 export {
   getTimezoneAbbre,
   addMinutesToTimestamp,
@@ -29,4 +33,5 @@ export {
   subtractDaysFromTimeStamp,
   addHoursToTimeStamp,
   subtractHoursFromTimeStamp,
+  daysBetween,
 };

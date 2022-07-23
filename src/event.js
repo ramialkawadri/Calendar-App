@@ -416,6 +416,18 @@ class Event {
     this.DOMElement.querySelector('.description').textContent = newDescription;
     this.DOMElement.setAttribute('description', newDescription);
   }
+
+  updateEventTimes(startTimestamp, endTimestamp) {
+    this.startTimestamp = startTimestamp;
+    this.endTimestamp = endTimestamp;
+    this.#updateParentCell();
+
+    this.eventEl.style.height = `${this.#height}px`;
+    this.eventEl.style.top = `${this.#verticalOffset}px`;
+
+    this.eventEl.setAttribute('start-time', this.startTimestamp);
+    this.eventEl.setAttribute('end-time', this.endTimestamp);
+  }
 }
 
 export default Event;
