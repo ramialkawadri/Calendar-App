@@ -396,6 +396,7 @@ class Event {
       parentCell.appendChild(this.eventEl);
       this.parentEl = parentCell;
       this.eventEl.style.top = `${this.#verticalOffset}px`;
+      this.eventEl.classList.remove('hidden');
     } else {
       this.eventEl.classList.add('hidden');
     }

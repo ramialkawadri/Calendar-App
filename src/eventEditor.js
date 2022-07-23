@@ -91,6 +91,7 @@ class EventEditor {
         </div>
 
         <div class="event-form__container">
+          <form>
           <div class="time">
             <div>
               <p>From:</p>
@@ -115,7 +116,6 @@ class EventEditor {
               </label>
             </div>
           </div>
-          <form>
             <input
               type="text"
               class="event-name"
@@ -168,6 +168,10 @@ class EventEditor {
     const endTimestamp = this.moment(
       `${this.toDateInputEl.value} ${this.toTimeInputEl.value}`
     ).valueOf();
+
+    // Error, we cannot have an event that ends before it begins or when it begins
+    if (endTimestamp <= this.selectedEvent.startTimestamp) return;
+
     this.selectedEvent.updateEventTimes(
       this.selectedEvent.startTimestamp,
       endTimestamp
@@ -281,7 +285,10 @@ class EventEditor {
     this.fromTimeInputEl.value = startTime.format(timeFormat);
 
     this.toDateInputEl.value = endTime.format(dateFormat);
+    this.toDateInputEl.setAttribute('min', startTime.format(dateFormat));
+
     this.toTimeInputEl.value = endTime.format(timeFormat);
+    this.toTimeInputEl.setAttribute('min', startTime.format(timeFormat));
   }
 }
 
