@@ -51,6 +51,12 @@ nav {
     grid-template-columns: 5rem 1fr;
   }
 
+  &.day .event-editor {
+    animation: fade 0.3s;
+    left: 50% !important;
+    transform: translateX(-50%);
+  }
+
   .calendar__header,
   .calendar__body {
     display: grid;
