@@ -5,6 +5,7 @@ import {
   addMinutesToTimestamp,
   subtractMinutesFromTimestamp,
   subtractDaysFromTimeStamp,
+  daysBetween,
 } from './time';
 
 class Event {
@@ -25,12 +26,10 @@ class Event {
     this.eventEditor = eventEditor;
     this.storageHandler = storageHandler;
 
-    // The DOM event element, it will changes its value in #initDOM function
-    this.eventEl = null;
+    // A list of the DOM elements that is represented
+    this.eventEls = [];
 
     // Represents the cell containing the event
-    this.parentEl = parentEl;
-
     this.startTimestamp = startTimestamp;
 
     // If no end time stamp is given, the duration of the event will be 1 hour
@@ -47,73 +46,20 @@ class Event {
     this.#initDOM();
   }
 
-  // It initialize the DOM for the event, it is called from the constructor
-  #initDOM() {
-    const eventEl = document.createElement('div');
-    const elementsContainer = document.createElement('div');
-    const titleEl = document.createElement('p');
-    const descriptionEl = document.createElement('p');
-
-    // Fixing the title
-    titleEl.classList.add('title');
-    titleEl.textContent = this.title ? this.title : '(Unnamed)';
-    elementsContainer.appendChild(titleEl);
-
-    // Fixing the description
-    descriptionEl.classList.add('description');
-    descriptionEl.textContent = this.description;
-    elementsContainer.appendChild(descriptionEl);
-
-    elementsContainer.classList.add('event-container');
-    eventEl.appendChild(elementsContainer);
-    eventEl.classList.add('event');
-
-    // Changing the height and the vertical offset
-    eventEl.style.height = `${this.#height}px`;
-    eventEl.style.top = `${this.#verticalOffset}px`;
-    this.parentEl.appendChild(eventEl);
-
-    /* 
-      This is a div that we put at the end of the placeholder, it is invisible
-      but gives the appropriate mouse cursor and changes it size while resizing so
-      that it helps resizing the container.
-    */
-    const resizeBoxEl = document.createElement('div');
-    resizeBoxEl.classList.add('resize-box');
-    eventEl.appendChild(resizeBoxEl);
-
-    eventEl.setAttribute('start-time', this.startTimestamp);
-    eventEl.setAttribute('end-time', this.endTimestamp);
-    eventEl.setAttribute('title', this.title);
-    eventEl.setAttribute('description', this.description);
-    eventEl.setAttribute('uuid', this.id);
-
-    // Enable resizing, moving and updating the eventEl
-    this.eventEl = eventEl;
-    this.#enableResizeEvents(resizeBoxEl);
-    this.#enableMovingEvents();
-
-    this.eventEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.eventEditor.showEventEditor(this);
-    });
-  }
-
-  // Returns the DOM element for the event
-  get DOMElement() {
-    return this.eventEl;
-  }
-
   // Calculates the event height from the time, 1 hour is equal 1 cell height,
   // minutes converts to percentages
-  get #height() {
-    const startTime = this.moment(this.startTimestamp),
-      endTime = this.moment(this.endTimestamp);
+  height(startTimestamp, endTimestamp) {
+    const startTime = this.moment(startTimestamp),
+      endTime = this.moment(endTimestamp);
     return (
       endTime.diff(startTime, 'hour') * this.table.getCellHeight() +
       ((endTime.minutes() - startTime.minutes()) / 60) *
         this.table.getCellHeight()
     );
+  }
+
+  get parentEl() {
+    return this.eventEls.length ? this.eventEls[0].parentNode : null;
   }
 
   // Returns the vertical offset from the table cell
@@ -124,7 +70,7 @@ class Event {
 
   // A function that adds the appropriate events for enabling resizing,
   // resizeBoxEl is the invisible box at the bottom of the eventEl
-  #enableResizeEvents(resizeBoxEl) {
+  #enableResizeEvents(eventEl, resizeBoxEl) {
     // The position are relative to the eventEl
     let mousePosition = {
       lastUpdatedY: 0, // Last position we updated the element on
@@ -149,17 +95,17 @@ class Event {
       // Making the event bigger
       while (difference >= changeValue) {
         difference -= changeValue;
-        const containerElHeight = getElementHeightFromCSS(this.eventEl);
-        this.eventEl.style.height = `${containerElHeight + changeValue}px`;
+        const containerElHeight = getElementHeightFromCSS(eventEl);
+        eventEl.style.height = `${containerElHeight + changeValue}px`;
         this.endTimestamp = addMinutesToTimestamp(this.endTimestamp, 15);
       }
 
       while (difference <= -changeValue) {
         difference += changeValue;
-        const containerElHeight = getElementHeightFromCSS(this.eventEl);
+        const containerElHeight = getElementHeightFromCSS(eventEl);
 
         if (containerElHeight - changeValue >= changeValue) {
-          this.eventEl.style.height = `${Math.max(
+          eventEl.style.height = `${Math.max(
             containerElHeight - changeValue,
             changeValue // It cannot be smaller than 1/4 the height
           )}px`;
@@ -176,9 +122,6 @@ class Event {
       if (!this.isPlaceholder) {
         this.storageHandler.updateEvent(this);
       }
-
-      // Updating the object attribute and the event time
-      this.eventEl.setAttribute('end-time', this.endTimestamp);
 
       this.eventEditor.updateEventEditorTimes();
     };
@@ -210,7 +153,7 @@ class Event {
     resizeBoxEl.addEventListener('mousedown', (e) => {
       e.stopPropagation();
       mousePosition.lastUpdatedY =
-        e.clientY - this.eventEl.getBoundingClientRect().top;
+        e.clientY - eventEl.getBoundingClientRect().top;
       mousePosition.currentY = mousePosition.lastUpdatedY;
       resizeEventStart();
     });
@@ -218,19 +161,18 @@ class Event {
     resizeBoxEl.addEventListener('touchstart', (e) => {
       e.stopPropagation();
       mousePosition.lastUpdatedY =
-        e.touches[0].clientY - this.eventEl.getBoundingClientRect().top;
+        e.touches[0].clientY - eventEl.getBoundingClientRect().top;
       mousePosition.currentY = mousePosition.lastUpdatedY;
       resizeEventStart();
     });
 
     // Updates the mouse position
     resizeBoxEl.addEventListener('mousemove', (e) => {
-      mousePosition.currentY =
-        e.clientY - this.eventEl.getBoundingClientRect().top;
+      mousePosition.currentY = e.clientY - eventEl.getBoundingClientRect().top;
     });
     resizeBoxEl.addEventListener('touchmove', (e) => {
       mousePosition.currentY =
-        e.touches[0].clientY - this.eventEl.getBoundingClientRect().top;
+        e.touches[0].clientY - eventEl.getBoundingClientRect().top;
     });
 
     // Stops the resize function
@@ -253,7 +195,7 @@ class Event {
     );
   }
 
-  #enableMovingEvents() {
+  #enableMovingEvents(eventEl) {
     // The position are relative to the eventEl
     const mousePosition = {
       x: 0,
@@ -264,7 +206,7 @@ class Event {
     // A variable to indicate if we have moved the event or not
     let hasMoved = false;
 
-    const cellWidth = this.eventEl.parentNode.offsetWidth,
+    const cellWidth = this.parentEl.offsetWidth,
       cellHeight = this.table.getCellHeight();
 
     const movingFunction = () => {
@@ -280,8 +222,6 @@ class Event {
         hasMoved = true;
         this.startTimestamp = subtractDaysFromTimeStamp(this.startTimestamp, 1);
         this.endTimestamp = subtractDaysFromTimeStamp(this.endTimestamp, 1);
-
-        if (!this.#updateParentCell()) break;
         mousePosition.x += cellWidth;
       }
 
@@ -290,8 +230,6 @@ class Event {
         hasMoved = true;
         this.startTimestamp = addDaysToTimeStamp(this.startTimestamp, 1);
         this.endTimestamp = addDaysToTimeStamp(this.endTimestamp, 1);
-
-        if (!this.#updateParentCell()) break;
         mousePosition.x -= cellWidth;
       }
 
@@ -303,8 +241,6 @@ class Event {
           15
         );
         this.endTimestamp = subtractMinutesFromTimestamp(this.endTimestamp, 15);
-
-        if (!this.#updateParentCell()) break;
         mousePosition.lastUpdatedY -= cellHeight * 0.25;
       }
 
@@ -313,28 +249,24 @@ class Event {
         hasMoved = true;
         this.startTimestamp = addMinutesToTimestamp(this.startTimestamp, 15);
         this.endTimestamp = addMinutesToTimestamp(this.endTimestamp, 15);
-
-        if (!this.#updateParentCell()) break;
         mousePosition.lastUpdatedY += cellHeight * 0.25;
       }
+      if (hasMoved) this.#updateDOM();
 
       if (!this.isPlaceholder) {
         this.storageHandler.updateEvent(this);
       }
-
-      this.eventEl.setAttribute('start-time', this.startTimestamp);
-      this.eventEl.setAttribute('end-time', this.endTimestamp);
     };
 
     // How often we run the interval
     const movingEventTime = 0;
-    let interval;
+    let interval = null;
 
     // Indicates if the editor was hidden or not
     let wasEditorHidden = false;
 
     const movingStart = () => {
-      this.eventEl.style.cursor = 'move';
+      eventEl.style.cursor = 'move';
       wasEditorHidden = this.eventEditor.isEditorHidden();
       this.eventEditor.hideEditorVisually();
       hasMoved = false;
@@ -344,35 +276,35 @@ class Event {
     };
 
     // Starts the movement
-    this.eventEl.addEventListener('mousedown', (e) => {
+    eventEl.addEventListener('mousedown', (e) => {
       e.stopPropagation();
       movingStart();
       mousePosition.lastUpdatedY = e.clientY;
       mousePosition.y = mousePosition.lastUpdatedY;
     });
 
-    this.eventEl.addEventListener('touchstart', (e) => {
+    eventEl.addEventListener('touchstart', (e) => {
       e.stopPropagation();
       movingStart();
       mousePosition.lastUpdatedY = e.touches[0].clientY;
       mousePosition.y = mousePosition.lastUpdatedY;
     });
 
-    this.eventEl.addEventListener('mousemove', (e) => {
+    eventEl.addEventListener('mousemove', (e) => {
       mousePosition.y = e.clientY;
-      mousePosition.x = e.clientX - this.eventEl.getBoundingClientRect().left;
+      mousePosition.x = e.clientX - eventEl.getBoundingClientRect().left;
     });
 
-    this.eventEl.addEventListener('touchmove', (e) => {
+    eventEl.addEventListener('touchmove', (e) => {
       mousePosition.y = e.touches[0].clientY;
       mousePosition.x =
-        e.touches[0].clientX - this.eventEl.getBoundingClientRect().left;
+        e.touches[0].clientX - eventEl.getBoundingClientRect().left;
     });
 
     // When the movement ends
     const endMovingEvent = (e) => {
       e.stopPropagation();
-      this.eventEl.style.cursor = 'pointer';
+      eventEl.style.cursor = 'pointer';
       if (interval) {
         clearInterval(interval);
         interval = null;
@@ -384,50 +316,131 @@ class Event {
       }
     };
 
-    ['mouseup', 'mouseleave', 'mouseout', 'touchend', 'touchcancel'].forEach(
-      (name) => this.eventEl.addEventListener(name, endMovingEvent.bind(this))
+    ['mouseup', 'touchend', 'touchcancel'].forEach((name) =>
+      eventEl.addEventListener(name, endMovingEvent)
     );
   }
 
-  // Updates the parent cell and returns it
-  #updateParentCell() {
-    const parentCell = this.table.getCellParent(this.startTimestamp);
-    if (parentCell) {
-      parentCell.appendChild(this.eventEl);
-      this.parentEl = parentCell;
-      this.eventEl.style.top = `${this.#verticalOffset}px`;
-      this.eventEl.classList.remove('hidden');
-    } else {
-      this.eventEl.classList.add('hidden');
+  #initDOM() {
+    this.removeDOMElement();
+    this.eventEls = [];
+
+    for (
+      let i = 0;
+      i <= daysBetween(this.startTimestamp, this.endTimestamp);
+      ++i
+    ) {
+      const eventEl = document.createElement('div');
+      eventEl.classList.add('event');
+      if (i === 0) {
+        const elementsContainer = document.createElement('div');
+        const titleEl = document.createElement('p');
+        const descriptionEl = document.createElement('p');
+
+        // Fixing the title
+        titleEl.classList.add('title');
+        titleEl.textContent = this.title ? this.title : '(Unnamed)';
+        elementsContainer.appendChild(titleEl);
+
+        // Fixing the description
+        descriptionEl.classList.add('description');
+        descriptionEl.textContent = this.description;
+        elementsContainer.appendChild(descriptionEl);
+
+        elementsContainer.classList.add('event-container');
+        eventEl.appendChild(elementsContainer);
+      }
+
+      this.eventEls.push(eventEl);
+
+      eventEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.eventEditor.showEventEditor(this);
+      });
     }
 
-    return parentCell;
+    this.#updateDOM();
+
+    // Enabling moving
+    this.eventEls.forEach((eventEl) => {
+      this.#enableMovingEvents(eventEl);
+    });
+
+    // Enabling resizing event
+    if (this.eventEls.length) {
+      /* 
+          This is a div that we put at the end of the placeholder, it is invisible
+          but gives the appropriate mouse cursor and changes it size while resizing so
+          that it helps resizing the container.
+        */
+      const eventEl = this.eventEls[this.eventEls.length - 1];
+      const resizeBoxEl = document.createElement('div');
+      resizeBoxEl.classList.add('resize-box');
+      eventEl.appendChild(resizeBoxEl);
+
+      // Enable resizing, moving and updating the eventEl
+      this.#enableResizeEvents(eventEl, resizeBoxEl);
+    }
+  }
+
+  // Updates the DOM and returns the parent element
+  #updateDOM() {
+    if (
+      daysBetween(this.startTimestamp, this.endTimestamp) !==
+      this.eventEls.length - 1
+    ) {
+      this.#initDOM();
+      return;
+    }
+
+    const time = this.moment(this.startTimestamp);
+    this.eventEls.forEach((eventEl, index) => {
+      // Changing the height and the vertical offset
+      eventEl.style.height = `${this.height(
+        time.valueOf(),
+        this.endTimestamp
+      )}px`;
+
+      if (index === 0) {
+        eventEl.style.top = `${this.#verticalOffset}px`;
+      }
+
+      const parentEl = this.table.getCellParent(time.valueOf());
+      if (parentEl) parentEl.appendChild(eventEl);
+      time.add(1, 'days').minutes(0).hour(0).seconds(0);
+    });
+
+    return this.parentEl;
+  }
+
+  // Saves the changes into the storage
+  saveChanges() {
+    if (!this.isPlaceholder) this.storageHandler.updateEvent(this);
   }
 
   updateEventTitle(newTitle) {
     this.title = newTitle;
-    this.DOMElement.querySelector('.title').textContent = newTitle
-      ? newTitle
-      : '(Unnamed)';
-    this.DOMElement.setAttribute('title', newTitle);
+    this.#updateDOM();
+    this.saveChanges();
   }
 
   updateEventDescription(newDescription) {
     this.description = newDescription;
-    this.DOMElement.querySelector('.description').textContent = newDescription;
-    this.DOMElement.setAttribute('description', newDescription);
+    this.#updateDOM();
+    this.saveChanges();
   }
 
   updateEventTimes(startTimestamp, endTimestamp) {
     this.startTimestamp = startTimestamp;
     this.endTimestamp = endTimestamp;
-    this.#updateParentCell();
+    // We need to initDOM again
+    this.#initDOM();
+    this.#updateDOM();
+    this.saveChanges();
+  }
 
-    this.eventEl.style.height = `${this.#height}px`;
-    this.eventEl.style.top = `${this.#verticalOffset}px`;
-
-    this.eventEl.setAttribute('start-time', this.startTimestamp);
-    this.eventEl.setAttribute('end-time', this.endTimestamp);
+  removeDOMElement() {
+    this.eventEls.forEach((el) => el.remove());
   }
 }
 

@@ -95,6 +95,10 @@ nav {
       display: flex;
       flex-direction: column;
 
+      &:nth-child(even) {
+        background-color: rgba(variables.$divider-color, 0.05);
+      }
+
       .calendar__hour {
         padding-right: 0.8rem;
         @include mixins.center-flex;

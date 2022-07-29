@@ -55,7 +55,7 @@ class EventEditor {
       if (this.selectedEvent) {
         if (this.selectedEvent.isPlaceholder)
           storageHandler.addEvent(this.selectedEvent);
-        else storageHandler.updateEvent(this.selectedEvent);
+        else this.selectedEvent.saveChanges();
         this.selectedEvent.isPlaceholder = false;
         this.hideEditor();
       }
@@ -70,7 +70,7 @@ class EventEditor {
       .addEventListener('click', (e) => {
         e.stopPropagation();
         if (this.selectedEvent) {
-          this.selectedEvent.DOMElement.remove();
+          this.selectedEvent.removeDOMElement();
           this.storageHandler.deleteEvent(this.selectedEvent);
           this.hideEditor();
         }
@@ -160,7 +160,6 @@ class EventEditor {
 
     this.selectedEvent.updateEventTimes(startTimestamp, endTimestamp);
     this.updateEventEditorTimes();
-    this.storageHandler.updateEvent(this.selectedEvent);
   }
 
   // This method will fire when we change the end time from the date pickers
@@ -177,7 +176,6 @@ class EventEditor {
       endTimestamp
     );
     this.updateEventEditorTimes();
-    this.storageHandler.updateEvent(this.selectedEvent);
   }
 
   isEditorHidden() {
@@ -190,14 +188,13 @@ class EventEditor {
     if (this.selectedEvent) {
       this.selectedEvent.updateEventTitle(this.titleInputEl.value);
       this.selectedEvent.updateEventDescription(this.descriptionInputEl.value);
-      this.storageHandler.updateEvent(this.selectedEvent);
     }
   }
 
   // Removes the event from the DOM if it is a placeholder
   #removePlaceholder() {
     if (this.selectedEvent && this.selectedEvent.isPlaceholder) {
-      this.selectedEvent.DOMElement.remove();
+      this.selectedEvent.removeDOMElement();
     }
   }
 
@@ -288,7 +285,6 @@ class EventEditor {
     this.toDateInputEl.setAttribute('min', startTime.format(dateFormat));
 
     this.toTimeInputEl.value = endTime.format(timeFormat);
-    this.toTimeInputEl.setAttribute('min', startTime.format(timeFormat));
   }
 }
 
