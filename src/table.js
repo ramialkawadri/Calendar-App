@@ -6,7 +6,7 @@ import Event from './event';
 import moment from 'moment';
 
 class Table {
-  constructor(tableEl, storageHandler, cellHeight = 60) {
+  constructor(tableEl, storageHandler, cellHeight = 45) {
     this.moment = require('moment');
     this.cellHeight = cellHeight; // In pixels
     this.storageHandler = storageHandler;
