@@ -1,88 +1,90 @@
 import { addMinutesToTimestamp } from './time';
 
 class EventEditor {
-  constructor(table, storageHandler) {
-    this.moment = require('moment');
-    this.table = table;
-    this.storageHandler = storageHandler;
+    constructor(table, storageHandler) {
+        this.moment = require('moment');
+        this.table = table;
+        this.storageHandler = storageHandler;
 
-    // The DOM elements
-    this.eventEditorEl = this.#initDOM();
-    table.getTableDOM().appendChild(this.eventEditorEl);
+        // The DOM elements
+        this.eventEditorEl = this.#initDOM();
+        table.getTableDOM().appendChild(this.eventEditorEl);
 
-    this.titleInputEl = this.eventEditorEl.querySelector('.event-name');
-    this.descriptionInputEl =
-      this.eventEditorEl.querySelector('.event-description');
+        this.titleInputEl = this.eventEditorEl.querySelector('.event-name');
+        this.descriptionInputEl =
+            this.eventEditorEl.querySelector('.event-description');
 
-    // The time pickers for the event editor
-    this.fromDateInputEl = this.eventEditorEl.querySelector('.from-date');
-    this.fromTimeInputEl = this.eventEditorEl.querySelector('.from-time');
-    this.toDateInputEl = this.eventEditorEl.querySelector('.to-date');
-    this.toTimeInputEl = this.eventEditorEl.querySelector('.to-time');
+        // The time pickers for the event editor
+        this.fromDateInputEl = this.eventEditorEl.querySelector('.from-date');
+        this.fromTimeInputEl = this.eventEditorEl.querySelector('.from-time');
+        this.toDateInputEl = this.eventEditorEl.querySelector('.to-date');
+        this.toTimeInputEl = this.eventEditorEl.querySelector('.to-time');
 
-    // We add the events for the date pickers
-    this.fromDateInputEl.addEventListener(
-      'change',
-      this.#fromInputChangeEvent.bind(this)
-    );
-    this.fromTimeInputEl.addEventListener(
-      'change',
-      this.#fromInputChangeEvent.bind(this)
-    );
+        // We add the events for the date pickers
+        this.fromDateInputEl.addEventListener(
+            'change',
+            this.#fromInputChangeEvent.bind(this)
+        );
+        this.fromTimeInputEl.addEventListener(
+            'change',
+            this.#fromInputChangeEvent.bind(this)
+        );
 
-    this.toDateInputEl.addEventListener(
-      'change',
-      this.#toInputChangeEvent.bind(this)
-    );
-    this.toTimeInputEl.addEventListener(
-      'change',
-      this.#toInputChangeEvent.bind(this)
-    );
+        this.toDateInputEl.addEventListener(
+            'change',
+            this.#toInputChangeEvent.bind(this)
+        );
+        this.toTimeInputEl.addEventListener(
+            'change',
+            this.#toInputChangeEvent.bind(this)
+        );
 
-    // The selected event object and element
-    this.selectedEvent = null;
+        // The selected event object and element
+        this.selectedEvent = null;
 
-    this.titleInputEl.addEventListener('input', () =>
-      this.#updateEventValues()
-    );
+        this.titleInputEl.addEventListener('input', () =>
+            this.#updateEventValues()
+        );
 
-    this.descriptionInputEl.addEventListener('input', () =>
-      this.#updateEventValues()
-    );
+        this.descriptionInputEl.addEventListener('input', () =>
+            this.#updateEventValues()
+        );
 
-    this.eventEditorEl.querySelector('form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (this.selectedEvent) {
-        if (this.selectedEvent.isPlaceholder)
-          storageHandler.addEvent(this.selectedEvent);
-        else this.selectedEvent.saveChanges();
-        this.selectedEvent.isPlaceholder = false;
-        this.hideEditor();
-      }
-    });
+        this.eventEditorEl
+            .querySelector('form')
+            .addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (this.selectedEvent) {
+                    if (this.selectedEvent.isPlaceholder)
+                        storageHandler.addEvent(this.selectedEvent);
+                    else this.selectedEvent.saveChanges();
+                    this.selectedEvent.isPlaceholder = false;
+                    this.hideEditor();
+                }
+            });
 
-    this.eventEditorEl
-      .querySelector('.exit-button')
-      .addEventListener('click', () => this.hideEditor());
+        this.eventEditorEl
+            .querySelector('.exit-button')
+            .addEventListener('click', () => this.hideEditor());
 
-    this.eventEditorEl
-      .querySelector('.delete-button')
-      .addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (this.selectedEvent) {
-          this.selectedEvent.removeDOMElement();
-          this.storageHandler.deleteEvent(this.selectedEvent);
-          this.hideEditor();
-        }
-      });
-  }
+        this.eventEditorEl
+            .querySelector('.delete-button')
+            .addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (this.selectedEvent) {
+                    this.selectedEvent.removeDOMElement();
+                    this.storageHandler.deleteEvent(this.selectedEvent);
+                    this.hideEditor();
+                }
+            });
+    }
 
-  // Initialize the DOM element for the event editor, called in constructor
-  #initDOM() {
-    const domElement = document.createElement('div');
-    domElement.classList.add('event-editor', 'hidden');
+    // Initialize the DOM element for the event editor, called in constructor
+    #initDOM() {
+        const domElement = document.createElement('div');
+        domElement.classList.add('event-editor', 'hidden');
 
-    domElement.innerHTML = `
+        domElement.innerHTML = `
         <div class="event-header">
           <p class="editor-title">Add an event</p>
           <button class="exit-button">
@@ -140,152 +142,162 @@ class EventEditor {
         </div>
     `;
 
-    return domElement;
-  }
-
-  // This method will fire when we change the start time from the date pickers
-  // it also changes the end time stamp value
-  #fromInputChangeEvent() {
-    // Calculating differences
-    const oldTime = this.moment(this.selectedEvent.startTimestamp);
-    const newTime = this.moment(
-      `${this.fromDateInputEl.value} ${this.fromTimeInputEl.value}`
-    );
-
-    const startTimestamp = newTime.valueOf();
-    const endTimestamp = addMinutesToTimestamp(
-      this.selectedEvent.endTimestamp,
-      newTime.diff(oldTime, 'minutes')
-    );
-
-    this.selectedEvent.updateEventTimes(startTimestamp, endTimestamp);
-    this.updateEventEditorTimes();
-  }
-
-  // This method will fire when we change the end time from the date pickers
-  #toInputChangeEvent() {
-    const endTimestamp = this.moment(
-      `${this.toDateInputEl.value} ${this.toTimeInputEl.value}`
-    ).valueOf();
-
-    // Error, we cannot have an event that ends before it begins or when it begins
-    if (endTimestamp <= this.selectedEvent.startTimestamp) return;
-
-    this.selectedEvent.updateEventTimes(
-      this.selectedEvent.startTimestamp,
-      endTimestamp
-    );
-    this.updateEventEditorTimes();
-  }
-
-  isEditorHidden() {
-    return this.eventEditorEl.classList.contains('hidden');
-  }
-
-  // Updates the title and description of the event to those written
-  // inside the text fields
-  #updateEventValues() {
-    if (this.selectedEvent) {
-      this.selectedEvent.updateEventTitle(this.titleInputEl.value);
-      this.selectedEvent.updateEventDescription(this.descriptionInputEl.value);
-    }
-  }
-
-  // Removes the event from the DOM if it is a placeholder
-  #removePlaceholder() {
-    if (this.selectedEvent && this.selectedEvent.isPlaceholder) {
-      this.selectedEvent.removeDOMElement();
-    }
-  }
-
-  hideEditorVisually() {
-    this.eventEditorEl.classList.add('hidden');
-  }
-
-  #showEditorVisually() {
-    this.eventEditorEl.classList.remove('hidden');
-  }
-
-  #clearInputs() {
-    this.titleInputEl.value = '';
-    this.descriptionInputEl.value = '';
-  }
-
-  hideEditor() {
-    this.hideEditorVisually();
-    this.#clearInputs();
-    this.#removePlaceholder();
-  }
-
-  // Show the event editor at the given event object
-  showEventEditor(event) {
-    if (this.selectedEvent !== event) {
-      // Removes the placeholder in case
-      this.#removePlaceholder();
+        return domElement;
     }
 
-    this.selectedEvent = event;
+    // This method will fire when we change the start time from the date pickers
+    // it also changes the end time stamp value
+    #fromInputChangeEvent() {
+        // Calculating differences
+        const oldTime = this.moment(this.selectedEvent.startTimestamp);
+        const newTime = this.moment(
+            `${this.fromDateInputEl.value} ${this.fromTimeInputEl.value}`
+        );
 
-    if (event.isPlaceholder)
-      this.eventEditorEl.querySelector('.editor-title').textContent =
-        'Add a new node';
-    else this.eventEditorEl.querySelector('.editor-title').textContent = 'Edit';
+        const startTimestamp = newTime.valueOf();
+        const endTimestamp = addMinutesToTimestamp(
+            this.selectedEvent.endTimestamp,
+            newTime.diff(oldTime, 'minutes')
+        );
 
-    // Showing the element
-    this.#showEditorVisually();
-
-    // Calculating the vertical position and updating the event editor DOM position
-    let topPosition =
-      event.parentEl.getBoundingClientRect().top +
-      window.scrollY -
-      event.parentEl.offsetHeight;
-    // Making sure that the event form does not overflow in y-axes
-    if (topPosition + this.eventEditorEl.offsetHeight > this.table.height()) {
-      topPosition += event.parentEl.offsetHeight;
-      const movingFactor = 1.1;
-      topPosition -= movingFactor * this.eventEditorEl.offsetHeight;
+        this.selectedEvent.updateEventTimes(startTimestamp, endTimestamp);
+        this.updateEventEditorTimes();
     }
-    this.eventEditorEl.style.top = `${topPosition}px`;
 
-    // Calculating the horizontal position and updating the event editor DOM position
-    let leftPosition =
-      event.parentEl.getBoundingClientRect().left +
-      window.scrollX +
-      event.parentEl.offsetWidth;
-    // Making sure that the event form does not overflow in x-axes
-    if (leftPosition + this.eventEditorEl.offsetWidth > this.table.width()) {
-      leftPosition -=
-        event.parentEl.offsetWidth + this.eventEditorEl.offsetWidth;
+    // This method will fire when we change the end time from the date pickers
+    #toInputChangeEvent() {
+        const endTimestamp = this.moment(
+            `${this.toDateInputEl.value} ${this.toTimeInputEl.value}`
+        ).valueOf();
+
+        // Error, we cannot have an event that ends before it begins or when it begins
+        if (endTimestamp <= this.selectedEvent.startTimestamp) return;
+
+        this.selectedEvent.updateEventTimes(
+            this.selectedEvent.startTimestamp,
+            endTimestamp
+        );
+        this.updateEventEditorTimes();
     }
-    this.eventEditorEl.style.left = `${leftPosition}px`;
 
-    this.updateEventEditorTimes();
-    this.#updateFormValues();
-  }
+    isEditorHidden() {
+        return this.eventEditorEl.classList.contains('hidden');
+    }
 
-  // Update the text fields values
-  #updateFormValues() {
-    this.titleInputEl.value = this.selectedEvent.title;
-    this.descriptionInputEl.value = this.selectedEvent.description;
-  }
+    // Updates the title and description of the event to those written
+    // inside the text fields
+    #updateEventValues() {
+        if (this.selectedEvent) {
+            this.selectedEvent.updateEventTitle(this.titleInputEl.value);
+            this.selectedEvent.updateEventDescription(
+                this.descriptionInputEl.value
+            );
+        }
+    }
 
-  // Updates the time from the selected event
-  updateEventEditorTimes() {
-    const startTimestamp = this.selectedEvent.startTimestamp;
-    const endTimestamp = this.selectedEvent.endTimestamp;
-    const dateFormat = 'YYYY-MM-DD';
-    const timeFormat = 'HH:mm';
-    const startTime = this.moment(startTimestamp);
-    const endTime = this.moment(endTimestamp);
+    // Removes the event from the DOM if it is a placeholder
+    #removePlaceholder() {
+        if (this.selectedEvent && this.selectedEvent.isPlaceholder) {
+            this.selectedEvent.removeDOMElement();
+        }
+    }
 
-    this.fromDateInputEl.value = startTime.format(dateFormat);
-    this.fromTimeInputEl.value = startTime.format(timeFormat);
+    hideEditorVisually() {
+        this.eventEditorEl.classList.add('hidden');
+    }
 
-    this.toDateInputEl.value = endTime.format(dateFormat);
-    this.toDateInputEl.setAttribute('min', startTime.format(dateFormat));
+    #showEditorVisually() {
+        this.eventEditorEl.classList.remove('hidden');
+    }
 
-    this.toTimeInputEl.value = endTime.format(timeFormat);
-  }
+    #clearInputs() {
+        this.titleInputEl.value = '';
+        this.descriptionInputEl.value = '';
+    }
+
+    hideEditor() {
+        this.hideEditorVisually();
+        this.#clearInputs();
+        this.#removePlaceholder();
+    }
+
+    // Show the event editor at the given event object
+    showEventEditor(event) {
+        if (this.selectedEvent !== event) {
+            // Removes the placeholder in case
+            this.#removePlaceholder();
+        }
+
+        this.selectedEvent = event;
+
+        if (event.isPlaceholder)
+            this.eventEditorEl.querySelector('.editor-title').textContent =
+                'Add a new node';
+        else
+            this.eventEditorEl.querySelector('.editor-title').textContent =
+                'Edit';
+
+        // Showing the element
+        this.#showEditorVisually();
+
+        // Calculating the vertical position and updating the event editor DOM position
+        let topPosition =
+            event.parentEl.getBoundingClientRect().top +
+            window.scrollY -
+            event.parentEl.offsetHeight;
+        // Making sure that the event form does not overflow in y-axes
+        if (
+            topPosition + this.eventEditorEl.offsetHeight >
+            this.table.height()
+        ) {
+            topPosition += event.parentEl.offsetHeight;
+            const movingFactor = 1.1;
+            topPosition -= movingFactor * this.eventEditorEl.offsetHeight;
+        }
+        this.eventEditorEl.style.top = `${topPosition}px`;
+
+        // Calculating the horizontal position and updating the event editor DOM position
+        let leftPosition =
+            event.parentEl.getBoundingClientRect().left +
+            window.scrollX +
+            event.parentEl.offsetWidth;
+        // Making sure that the event form does not overflow in x-axes
+        if (
+            leftPosition + this.eventEditorEl.offsetWidth >
+            this.table.width()
+        ) {
+            leftPosition -=
+                event.parentEl.offsetWidth + this.eventEditorEl.offsetWidth;
+        }
+        this.eventEditorEl.style.left = `${leftPosition}px`;
+
+        this.updateEventEditorTimes();
+        this.#updateFormValues();
+    }
+
+    // Update the text fields values
+    #updateFormValues() {
+        this.titleInputEl.value = this.selectedEvent.title;
+        this.descriptionInputEl.value = this.selectedEvent.description;
+    }
+
+    // Updates the time from the selected event
+    updateEventEditorTimes() {
+        const startTimestamp = this.selectedEvent.startTimestamp;
+        const endTimestamp = this.selectedEvent.endTimestamp;
+        const dateFormat = 'YYYY-MM-DD';
+        const timeFormat = 'HH:mm';
+        const startTime = this.moment(startTimestamp);
+        const endTime = this.moment(endTimestamp);
+
+        this.fromDateInputEl.value = startTime.format(dateFormat);
+        this.fromTimeInputEl.value = startTime.format(timeFormat);
+
+        this.toDateInputEl.value = endTime.format(dateFormat);
+        this.toDateInputEl.setAttribute('min', startTime.format(dateFormat));
+
+        this.toTimeInputEl.value = endTime.format(timeFormat);
+    }
 }
 
 export default EventEditor;

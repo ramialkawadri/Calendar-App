@@ -1,32 +1,32 @@
 @media (max-width: 820px) {
-  html {
-    /* 8px */
-    font-size: 50%;
-  }
+    html {
+        /* 8px */
+        font-size: 50%;
+    }
 }
 
 @media (max-width: 470px) {
-  nav {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    justify-items: center;
-  }
+    nav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        justify-items: center;
+    }
 
-  .event-editor {
-    left: 50% !important;
-    transform: translate(-50%, -125%) !important;
-    width: 90%;
-  }
+    .event-editor {
+        left: 50% !important;
+        transform: translate(-50%, -125%) !important;
+        width: 90%;
+    }
 }
 
 @media (max-width: 340px) {
-  nav {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    nav {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 250px) {
-  nav {
-    grid-template-columns: 1fr;
-  }
+    nav {
+        grid-template-columns: 1fr;
+    }
 }
