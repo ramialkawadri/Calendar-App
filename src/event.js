@@ -450,6 +450,11 @@ class Event {
 
             if (index === 0) {
                 eventEl.style.top = `${this.#verticalOffset}px`;
+                eventEl.querySelector('.title').textContent = this.title
+                    ? this.title
+                    : '(Unnamed)';
+                eventEl.querySelector('.description').textContent =
+                    this.description;
             }
 
             const parentEl = this.table.getCellParent(time.valueOf());
