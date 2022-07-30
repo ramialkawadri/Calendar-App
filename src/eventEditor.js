@@ -222,7 +222,8 @@ class EventEditor {
     }
 
     // Show the event editor at the given event object
-    showEventEditor(event) {
+    // Giving the mouse event will make the event editor shows at the mouse position
+    showEventEditor(event, mouseEvent = null) {
         if (this.selectedEvent !== event) {
             // Removes the placeholder in case
             this.#removePlaceholder();
@@ -242,9 +243,10 @@ class EventEditor {
 
         // Calculating the vertical position and updating the event editor DOM position
         let topPosition =
+            mouseEvent?.clientY ??
             event.parentEl.getBoundingClientRect().top +
-            window.scrollY -
-            event.parentEl.offsetHeight;
+                window.scrollY -
+                event.parentEl.offsetHeight;
         // Making sure that the event form does not overflow in y-axes
         if (
             topPosition + this.eventEditorEl.offsetHeight >
@@ -258,9 +260,10 @@ class EventEditor {
 
         // Calculating the horizontal position and updating the event editor DOM position
         let leftPosition =
+            mouseEvent?.clientX ??
             event.parentEl.getBoundingClientRect().left +
-            window.scrollX +
-            event.parentEl.offsetWidth;
+                window.scrollX +
+                event.parentEl.offsetWidth;
         // Making sure that the event form does not overflow in x-axes
         if (
             leftPosition + this.eventEditorEl.offsetWidth >

@@ -59,7 +59,7 @@ class StorageHandler {
     getAllInRange(startTimestamp, endTimestamp) {
         return this.events.filter(
             (event) =>
-                startTimestamp <= event.startTimestamp &&
+                startTimestamp <= event.startTimestamp ||
                 event.endTimestamp <= endTimestamp
         );
     }

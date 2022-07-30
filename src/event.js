@@ -58,7 +58,10 @@ class Event {
     }
 
     get parentEl() {
-        return this.eventEls.length ? this.eventEls[0].parentNode : null;
+        for (const event of this.eventEls) {
+            if (event.parentNode) return event.parentNode;
+        }
+        return null;
     }
 
     // Returns the vertical offset from the table cell
@@ -137,7 +140,7 @@ class Event {
         // The original resize box size
         const initialResizeElementHeight = resizeBoxEl.offsetHeight;
         // The height for the resize box while resizing
-        const resizeBoxResizeHeight = `${this.table.getCellHeight() * 5}px`;
+        const resizeBoxResizeHeight = `${this.table.getCellHeight() * 7}px`;
 
         // The interval period of the resize event in milliseconds
         const intervalPeriod = 0;
@@ -217,7 +220,7 @@ class Event {
         // A variable to indicate if we have moved the event or not
         let hasMoved = false;
 
-        const cellWidth = this.parentEl.offsetWidth,
+        const cellWidth = this.table.getCellWidth,
             cellHeight = this.table.getCellHeight();
 
         const movingFunction = () => {
@@ -384,7 +387,7 @@ class Event {
 
             eventEl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.eventEditor.showEventEditor(this);
+                this.eventEditor.showEventEditor(this, e);
             });
         }
 
@@ -398,10 +401,10 @@ class Event {
         // Enabling resizing event
         if (this.eventEls.length) {
             /* 
-          This is a div that we put at the end of the placeholder, it is invisible
-          but gives the appropriate mouse cursor and changes it size while resizing so
-          that it helps resizing the container.
-        */
+                This is a div that we put at the end of the placeholder, it is 
+                invisible but gives the appropriate mouse cursor and changes it 
+                size while resizing so that it helps resizing the container.
+            */
             const eventEl = this.eventEls[this.eventEls.length - 1];
             const resizeBoxEl = document.createElement('div');
             resizeBoxEl.classList.add('resize-box');
@@ -410,6 +413,21 @@ class Event {
             // Enable resizing, moving and updating the eventEl
             this.#enableResizeEvents(eventEl, resizeBoxEl);
         }
+
+        // Enabling hover affects on the nodes
+        this.eventEls.forEach((event) => {
+            event.addEventListener('mouseover', () => {
+                this.eventEls.forEach((currentEvent) =>
+                    currentEvent.classList.add('event-hover')
+                );
+            });
+
+            event.addEventListener('mouseout', () => {
+                this.eventEls.forEach((currentEvent) =>
+                    currentEvent.classList.remove('event-hover')
+                );
+            });
+        });
     }
 
     // Updates the DOM and returns the parent element

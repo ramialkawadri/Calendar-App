@@ -47,6 +47,10 @@ class Table {
         return this.cellHeight;
     }
 
+    getCellWidth() {
+        return this.tableBody.querySelector('.calendar__cell').offsetWidth;
+    }
+
     // Generate the table header with the days starting from startingTime,
     // this is a helper function for generateEmptyTable
     #generateTableHeader(startingTime, numberOfDays) {
@@ -143,7 +147,11 @@ class Table {
 
     // Generate an empty table and views it
     generateEmptyTable(startingTime = null, numberOfDays = 7) {
+        // This variable indicates if we should scroll to the current time of the day
+        const scrollToCurrentTime = startingTime === null;
+
         startingTime ??= moment();
+
         startingTime = startingTime
             .hours(0)
             .minutes(0)
@@ -178,6 +186,17 @@ class Table {
         this.#generateTableBody(startingTime, numberOfDays);
 
         this.#showSavedEvents();
+
+        if (scrollToCurrentTime) this.#scrollToCurrentTime();
+    }
+
+    #scrollToCurrentTime() {
+        const cell = this.getCellParent(this.moment().valueOf());
+        window.scroll({
+            top: cell.getBoundingClientRect().top - this.cellHeight * 2,
+            left: cell.getBoundingClientRect().left,
+            behavior: 'smooth',
+        });
     }
 
     // Show all saved events that fits into the table
@@ -196,7 +215,6 @@ class Table {
             new Event(
                 this,
                 this.eventEditor,
-                this.getCellParent(e.startTimestamp),
                 this.storageHandler,
                 e.startTimestamp,
                 e.endTimestamp,
