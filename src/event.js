@@ -51,9 +51,8 @@ class Event {
         const startTime = this.moment(startTimestamp),
             endTime = this.moment(endTimestamp);
         return (
-            endTime.diff(startTime, 'hour') * this.table.getCellHeight() +
-            ((endTime.minutes() - startTime.minutes()) / 60) *
-                this.table.getCellHeight()
+            (endTime.diff(startTime, 'minutes') / 60.0) *
+            this.table.getCellHeight()
         );
     }
 
