@@ -219,7 +219,7 @@ class Event {
         // A variable to indicate if we have moved the event or not
         let hasMoved = false;
 
-        const cellWidth = this.table.getCellWidth,
+        const cellWidth = this.table.getCellWidth(),
             cellHeight = this.table.getCellHeight();
 
         const movingFunction = () => {
