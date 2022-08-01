@@ -1,4 +1,4 @@
-import { getElementHeightFromCSS } from './utility';
+import { getElementHeightFromCSS, windowMousePosition } from './utility';
 import { v4 as uuidv4 } from 'uuid';
 import {
     addDaysToTimeStamp,
@@ -222,38 +222,45 @@ class Event {
         const cellWidth = this.table.getCellWidth(),
             cellHeight = this.table.getCellHeight();
 
+        // How often we run the interval
+        const movingEventTime = 0;
+        let interval = null;
+
+        // Indicates if the editor was hidden or not
+        let wasEditorHidden = false;
+
+        // When the movement ends
+        const endMovingEvent = (e) => {
+            if (e) e.stopPropagation();
+            eventEl.style.cursor = 'pointer';
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+
+            // If the user clicked or the event editor was already shown
+            if (hasMoved && wasEditorHidden) {
+                this.eventEditor.hideEditor();
+            }
+        };
+
         const movingFunction = () => {
+            mousePosition.y = windowMousePosition.y;
+            mousePosition.x =
+                windowMousePosition.x - eventEl.getBoundingClientRect().left;
+
+            // Stopping the moving when the elements gets recreated
+            if (eventEl.getBoundingClientRect().left === 0) {
+                endMovingEvent();
+                return;
+            }
+
             // Removing text selections so it doesn't interfere with the moving
             window.getSelection().removeAllRanges();
 
             // If the changes are less or equal than this nothing happen in any direction
             const xGapError = cellWidth / 2.0;
             const yGapError = cellHeight / 6.0;
-
-            // Moving left
-            while (mousePosition.x < -xGapError) {
-                hasMoved = true;
-                this.startTimestamp = subtractDaysFromTimeStamp(
-                    this.startTimestamp,
-                    1
-                );
-                this.endTimestamp = subtractDaysFromTimeStamp(
-                    this.endTimestamp,
-                    1
-                );
-                mousePosition.x += cellWidth;
-            }
-
-            // Moving right
-            while (mousePosition.x > xGapError + cellWidth) {
-                hasMoved = true;
-                this.startTimestamp = addDaysToTimeStamp(
-                    this.startTimestamp,
-                    1
-                );
-                this.endTimestamp = addDaysToTimeStamp(this.endTimestamp, 1);
-                mousePosition.x -= cellWidth;
-            }
 
             // Moving up, 15 minutes at the time
             while (mousePosition.lastUpdatedY - mousePosition.y > yGapError) {
@@ -282,19 +289,38 @@ class Event {
                 );
                 mousePosition.lastUpdatedY += cellHeight * 0.25;
             }
+
+            // Moving left
+            while (mousePosition.x < -xGapError) {
+                hasMoved = true;
+                this.startTimestamp = subtractDaysFromTimeStamp(
+                    this.startTimestamp,
+                    1
+                );
+                this.endTimestamp = subtractDaysFromTimeStamp(
+                    this.endTimestamp,
+                    1
+                );
+                mousePosition.x += cellWidth;
+            }
+
+            // Moving right
+            while (mousePosition.x > xGapError + cellWidth) {
+                hasMoved = true;
+                this.startTimestamp = addDaysToTimeStamp(
+                    this.startTimestamp,
+                    1
+                );
+                this.endTimestamp = addDaysToTimeStamp(this.endTimestamp, 1);
+                mousePosition.x -= cellWidth;
+            }
+
             if (hasMoved) this.#updateDOM();
 
             if (!this.isPlaceholder) {
                 this.storageHandler.updateEvent(this);
             }
         };
-
-        // How often we run the interval
-        const movingEventTime = 0;
-        let interval = null;
-
-        // Indicates if the editor was hidden or not
-        let wasEditorHidden = false;
 
         const movingStart = () => {
             eventEl.style.cursor = 'move';
@@ -310,46 +336,20 @@ class Event {
         eventEl.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             movingStart();
+            window.addEventListener('mouseup', endMovingEvent.bind(this));
             mousePosition.lastUpdatedY = e.clientY;
-            mousePosition.y = mousePosition.lastUpdatedY;
         });
 
         eventEl.addEventListener('touchstart', (e) => {
             e.stopPropagation();
             movingStart();
+            window.addEventListener('touchend', endMovingEvent.bind(this));
             mousePosition.lastUpdatedY = e.touches[0].clientY;
-            mousePosition.y = mousePosition.lastUpdatedY;
         });
 
-        eventEl.addEventListener('mousemove', (e) => {
-            mousePosition.y = e.clientY;
-            mousePosition.x = e.clientX - eventEl.getBoundingClientRect().left;
+        ['mouseup', 'touchend', 'touchcancel'].forEach((name) => {
+            eventEl.addEventListener(name, endMovingEvent);
         });
-
-        eventEl.addEventListener('touchmove', (e) => {
-            mousePosition.y = e.touches[0].clientY;
-            mousePosition.x =
-                e.touches[0].clientX - eventEl.getBoundingClientRect().left;
-        });
-
-        // When the movement ends
-        const endMovingEvent = (e) => {
-            e.stopPropagation();
-            eventEl.style.cursor = 'pointer';
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
-
-            // If the user clicked or the event editor was already shown
-            if (hasMoved && wasEditorHidden) {
-                this.eventEditor.hideEditor();
-            }
-        };
-
-        ['mouseup', 'touchend', 'touchcancel'].forEach((name) =>
-            eventEl.addEventListener(name, endMovingEvent)
-        );
     }
 
     #initDOM() {
@@ -457,7 +457,10 @@ class Event {
             }
 
             const parentEl = this.table.getCellParent(time.valueOf());
-            if (parentEl) parentEl.appendChild(eventEl);
+            if (parentEl) {
+                parentEl.appendChild(eventEl);
+                eventEl.classList.remove('hidden');
+            } else eventEl.classList.add('hidden');
             time.add(1, 'days').minutes(0).hour(0).seconds(0);
         });
 

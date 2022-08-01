@@ -17,4 +17,19 @@ const calculateMinutePercentage = (mouseClickPosition, containerHeight) => {
 const getElementHeightFromCSS = (element) =>
     Number(element.style.height.replace('px', ''));
 
-export { calculateMinutePercentage, getElementHeightFromCSS };
+// Returns the mouse position in the workspace
+const windowMousePosition = {
+    x: 0,
+    y: 0,
+};
+
+window.addEventListener('mousemove', (e) => {
+    windowMousePosition.x = e.clientX;
+    windowMousePosition.y = e.clientY;
+});
+
+export {
+    calculateMinutePercentage,
+    getElementHeightFromCSS,
+    windowMousePosition,
+};
