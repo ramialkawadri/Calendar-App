@@ -2,7 +2,7 @@
 class StorageHandler {
     constructor() {
         this.events = [];
-        this.storageKey = 'events;';
+        this.storageKey = 'events';
 
         // Loading the events
         const loadedEvents = localStorage.getItem(this.storageKey);

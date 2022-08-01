@@ -454,12 +454,6 @@ class Event {
                 this.endTimestamp
             )}px`;
 
-            eventEl.querySelector('.time').textContent = `${this.moment(
-                this.startTimestamp
-            ).format('HH:mm')} - ${this.moment(this.endTimestamp).format(
-                'HH:mm'
-            )}`;
-
             if (index === 0) {
                 eventEl.style.top = `${this.#verticalOffset}px`;
                 eventEl.querySelector('.title').textContent = this.title
@@ -467,6 +461,11 @@ class Event {
                     : '(Unnamed)';
                 eventEl.querySelector('.description').textContent =
                     this.description;
+                eventEl.querySelector('.time').textContent = `${this.moment(
+                    this.startTimestamp
+                ).format('HH:mm')} - ${this.moment(this.endTimestamp).format(
+                    'HH:mm'
+                )}`;
             }
 
             const parentEl = this.table.getCellParent(time.valueOf());
