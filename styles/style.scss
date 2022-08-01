@@ -219,8 +219,12 @@ nav {
     }
 
     .description {
-        color: variables.$light-grey;
-        margin-top: 0.4rem;
+        color: variables.$grey-color;
+    }
+
+    .time {
+        margin-top: 0.8rem;
+        font-size: 1rem;
     }
 
     .resize-box {

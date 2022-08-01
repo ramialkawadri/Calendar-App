@@ -363,10 +363,13 @@ class Event {
         ) {
             const eventEl = document.createElement('div');
             eventEl.classList.add('event');
+
             if (i === 0) {
                 const elementsContainer = document.createElement('div');
                 const titleEl = document.createElement('p');
                 const descriptionEl = document.createElement('p');
+
+                const timeViewerEl = document.createElement('div');
 
                 // Fixing the title
                 titleEl.classList.add('title');
@@ -377,6 +380,10 @@ class Event {
                 descriptionEl.classList.add('description');
                 descriptionEl.textContent = this.description;
                 elementsContainer.appendChild(descriptionEl);
+
+                // The time viewer
+                timeViewerEl.classList.add('time');
+                elementsContainer.appendChild(timeViewerEl);
 
                 elementsContainer.classList.add('event-container');
                 eventEl.appendChild(elementsContainer);
@@ -446,6 +453,12 @@ class Event {
                 time.valueOf(),
                 this.endTimestamp
             )}px`;
+
+            eventEl.querySelector('.time').textContent = `${this.moment(
+                this.startTimestamp
+            ).format('HH:mm')} - ${this.moment(this.endTimestamp).format(
+                'HH:mm'
+            )}`;
 
             if (index === 0) {
                 eventEl.style.top = `${this.#verticalOffset}px`;
