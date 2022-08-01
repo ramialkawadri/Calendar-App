@@ -3,12 +3,6 @@
 // Sass files
 import '../styles/general.scss';
 
-// Fontawesome
-import '@fortawesome/fontawesome-free/js/fontawesome';
-import '@fortawesome/fontawesome-free/js/solid';
-import '@fortawesome/fontawesome-free/js/regular';
-import '@fortawesome/fontawesome-free/js/brands';
-
 // Javascript files
 import Table from './table';
 import StorageHandler from './storage';
