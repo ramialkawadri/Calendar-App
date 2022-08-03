@@ -38,17 +38,17 @@ nav {
 
     &.week .calendar__header,
     &.week .calendar__body {
-        grid-template-columns: 5rem repeat(7, 1fr);
+        grid-template-columns: 4rem repeat(7, 1fr);
     }
 
     &.four .calendar__header,
     &.four .calendar__body {
-        grid-template-columns: 5rem repeat(4, 1fr);
+        grid-template-columns: 4rem repeat(4, 1fr);
     }
 
     &.day .calendar__header,
     &.day .calendar__body {
-        grid-template-columns: 5rem 1fr;
+        grid-template-columns: 4rem 1fr;
     }
 
     &.day .event-editor {
@@ -123,7 +123,7 @@ nav {
     z-index: 10;
 
     box-shadow: 0 0 18px rgba(variables.$primary-text-color, 0.2);
-    min-width: 30rem;
+    width: 35rem;
     animation: fade-right 0.35s ease-out;
 
     .event-header {
@@ -158,10 +158,17 @@ nav {
         gap: 1.2rem;
 
         & > div {
-            display: flex;
-            gap: 1rem;
+            display: grid;
+            grid-template-columns: 1.2fr 5fr 5fr;
+            column-gap: 1rem;
             align-items: center;
-            justify-content: end;
+
+            label {
+                display: grid;
+                grid-template-columns: 1fr 9fr;
+                column-gap: 0.4rem;
+                align-items: center;
+            }
 
             svg {
                 color: variables.$secondary-text-color;

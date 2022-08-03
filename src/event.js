@@ -100,12 +100,11 @@ class Event {
             // Making the event bigger
             while (difference >= changeValue) {
                 difference -= changeValue;
-                const containerElHeight = getElementHeightFromCSS(eventEl);
-                eventEl.style.height = `${containerElHeight + changeValue}px`;
                 this.endTimestamp = addMinutesToTimestamp(
                     this.endTimestamp,
                     15
                 );
+                this.#updateDOM();
             }
 
             while (difference <= -changeValue) {
@@ -113,14 +112,11 @@ class Event {
                 const containerElHeight = getElementHeightFromCSS(eventEl);
 
                 if (containerElHeight - changeValue >= changeValue) {
-                    eventEl.style.height = `${Math.max(
-                        containerElHeight - changeValue,
-                        changeValue // It cannot be smaller than 1/4 the height
-                    )}px`;
                     this.endTimestamp = subtractMinutesFromTimestamp(
                         this.endTimestamp,
                         15
                     );
+                    this.#updateDOM();
                 }
             }
 
@@ -241,6 +237,8 @@ class Event {
             // If the user clicked or the event editor was already shown
             if (hasMoved && wasEditorHidden) {
                 this.eventEditor.hideEditor();
+            } else if (!wasEditorHidden || !hasMoved) {
+                this.eventEditor.showEventEditor(this);
             }
         };
 
@@ -348,7 +346,7 @@ class Event {
         });
 
         ['mouseup', 'touchend', 'touchcancel'].forEach((name) => {
-            eventEl.addEventListener(name, endMovingEvent);
+            eventEl.addEventListener(name, endMovingEvent.bind(this));
         });
     }
 
@@ -393,7 +391,6 @@ class Event {
 
             eventEl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.eventEditor.showEventEditor(this, e);
             });
         }
 

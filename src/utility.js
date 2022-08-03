@@ -28,6 +28,11 @@ window.addEventListener('mousemove', (e) => {
     windowMousePosition.y = e.clientY;
 });
 
+window.addEventListener('touchmove', (e) => {
+    windowMousePosition.x = e.touches[0].clientX;
+    windowMousePosition.y = e.touches[0].clientY;
+});
+
 export {
     calculateMinutePercentage,
     getElementHeightFromCSS,

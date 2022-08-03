@@ -142,6 +142,10 @@ class EventEditor {
         </div>
     `;
 
+        domElement.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
         return domElement;
     }
 
