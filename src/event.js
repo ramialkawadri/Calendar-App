@@ -143,7 +143,7 @@ class Event {
         resizeBoxEl.addEventListener('click', (e) => e.stopPropagation());
 
         // Indicate if the event editor was hidden at the start of editing
-        let wasEditorHidden;
+        let wasEditorHidden = true;
 
         const resizeEventStart = () => {
             wasEditorHidden = this.eventEditor.isEditorHidden();
