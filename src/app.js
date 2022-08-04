@@ -6,8 +6,7 @@ import '../styles/general.scss';
 // Javascript files
 import Table from './table';
 import StorageHandler from './storage';
-
-const moment = require('moment');
+import moment from 'moment';
 
 const storageHandler = new StorageHandler();
 const calendar = new Table(

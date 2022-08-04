@@ -1,8 +1,8 @@
 import { addMinutesToTimestamp } from './time';
+import moment from 'moment';
 
 class EventEditor {
     constructor(table, storageHandler) {
-        this.moment = require('moment');
         this.table = table;
         this.storageHandler = storageHandler;
 
@@ -153,8 +153,8 @@ class EventEditor {
     // it also changes the end time stamp value
     #fromInputChangeEvent() {
         // Calculating differences
-        const oldTime = this.moment(this.selectedEvent.startTimestamp);
-        const newTime = this.moment(
+        const oldTime = moment(this.selectedEvent.startTimestamp);
+        const newTime = moment(
             `${this.fromDateInputEl.value} ${this.fromTimeInputEl.value}`
         );
 
@@ -170,7 +170,7 @@ class EventEditor {
 
     // This method will fire when we change the end time from the date pickers
     #toInputChangeEvent() {
-        const endTimestamp = this.moment(
+        const endTimestamp = moment(
             `${this.toDateInputEl.value} ${this.toTimeInputEl.value}`
         ).valueOf();
 
@@ -294,8 +294,8 @@ class EventEditor {
         const endTimestamp = this.selectedEvent.endTimestamp;
         const dateFormat = 'YYYY-MM-DD';
         const timeFormat = 'HH:mm';
-        const startTime = this.moment(startTimestamp);
-        const endTime = this.moment(endTimestamp);
+        const startTime = moment(startTimestamp);
+        const endTime = moment(endTimestamp);
 
         this.fromDateInputEl.value = startTime.format(dateFormat);
         this.fromTimeInputEl.value = startTime.format(timeFormat);

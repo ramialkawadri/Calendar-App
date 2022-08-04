@@ -1,5 +1,5 @@
 // This file has functions for working with time
-const moment = require('moment');
+import moment from 'moment';
 
 // Return the current timezone abbreviation
 const getTimezoneAbbre = (date = new Date()) =>
@@ -28,7 +28,6 @@ const daysBetween = (startTimestamp, endTimestamp) => {
     const end = moment(endTimestamp);
     end.hours(start.hours()).minutes(start.minutes());
     return end.diff(start, 'days');
-    // Math.floor((endTimestamp - startTimestamp) / 86400000);
 };
 
 export {

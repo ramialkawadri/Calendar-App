@@ -7,6 +7,7 @@ import {
     subtractDaysFromTimeStamp,
     daysBetween,
 } from './time';
+import moment from 'moment';
 
 class Event {
     constructor(
@@ -20,7 +21,6 @@ class Event {
         isPlaceholder = true,
         id = ''
     ) {
-        this.moment = require('moment');
         this.table = table;
         this.eventEditor = eventEditor;
         this.storageHandler = storageHandler;
@@ -32,7 +32,7 @@ class Event {
         this.startTimestamp = startTimestamp;
 
         // If no end time stamp is given, the duration of the event will be 1 hour
-        endTimestamp ??= this.moment(startTimestamp).add(1, 'hour').valueOf();
+        endTimestamp ??= moment(startTimestamp).add(1, 'hour').valueOf();
         this.endTimestamp = endTimestamp;
         this.title = title;
         this.description = description;
@@ -48,8 +48,8 @@ class Event {
     // Calculates the event height from the time, 1 hour is equal 1 cell height,
     // minutes converts to percentages
     height(startTimestamp, endTimestamp) {
-        const startTime = this.moment(startTimestamp),
-            endTime = this.moment(endTimestamp);
+        const startTime = moment(startTimestamp),
+            endTime = moment(endTimestamp);
         return (
             (endTime.diff(startTime, 'minutes') / 60.0) *
             this.table.getCellHeight()
@@ -65,7 +65,7 @@ class Event {
 
     // Returns the vertical offset from the table cell
     get #verticalOffset() {
-        const startTime = this.moment(this.startTimestamp);
+        const startTime = moment(this.startTimestamp);
         return (startTime.minute() / 60) * this.table.getCellHeight();
     }
 
@@ -443,7 +443,7 @@ class Event {
             return;
         }
 
-        const time = this.moment(this.startTimestamp);
+        const time = moment(this.startTimestamp);
         this.eventEls.forEach((eventEl, index) => {
             // Changing the height and the vertical offset
             eventEl.style.height = `${this.height(
@@ -458,9 +458,9 @@ class Event {
                     : '(Unnamed)';
                 eventEl.querySelector('.description').textContent =
                     this.description;
-                eventEl.querySelector('.time').textContent = `${this.moment(
+                eventEl.querySelector('.time').textContent = `${moment(
                     this.startTimestamp
-                ).format('HH:mm')} - ${this.moment(this.endTimestamp).format(
+                ).format('HH:mm')} - ${moment(this.endTimestamp).format(
                     'HH:mm'
                 )}`;
             }

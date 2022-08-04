@@ -7,7 +7,6 @@ import moment from 'moment';
 
 class Table {
     constructor(tableEl, storageHandler, cellHeight = 50) {
-        this.moment = require('moment');
         this.cellHeight = cellHeight; // In pixels
         this.storageHandler = storageHandler;
         this.tableEl = tableEl;
@@ -55,7 +54,7 @@ class Table {
     // this is a helper function for generateEmptyTable
     #generateTableHeader(startingTime, numberOfDays) {
         // Cloning the starting time
-        const time = this.moment(startingTime);
+        const time = moment(startingTime);
 
         for (let i = 0; i <= numberOfDays; ++i) {
             const headerChild = document.createElement('div');
@@ -85,7 +84,7 @@ class Table {
     // this is a helper function for generateEmptyTable
     #generateTableBody(startingTime, numberOfDays) {
         // Cloning the starting time, and putting starting hour, minute and second to zero
-        const time = this.moment(startingTime)
+        const time = moment(startingTime)
             .set('hour', 0)
             .set('minute', 0)
             .set('second', 0);
@@ -125,7 +124,7 @@ class Table {
                         );
 
                         // The timestamp for the appropriate day, hour, and minute
-                        const timestamp = this.moment(time)
+                        const timestamp = moment(time)
                             .add(i - 1, 'days')
                             .add(j, 'hour')
                             .minutes(minutePercentage * 60)
@@ -191,7 +190,7 @@ class Table {
     }
 
     #scrollToCurrentTime() {
-        const cell = this.getCellParent(this.moment().valueOf());
+        const cell = this.getCellParent(moment().valueOf());
         window.scroll({
             top: cell.getBoundingClientRect().top - this.cellHeight * 2,
             left: cell.getBoundingClientRect().left,
@@ -240,7 +239,7 @@ class Table {
 
         const tableCell =
             tableRow.querySelectorAll('.calendar__cell')[
-                this.moment(timestamp).hours()
+                moment(timestamp).hours()
             ];
         return tableCell;
     }

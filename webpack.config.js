@@ -1,11 +1,11 @@
 const path = require('path');
 
 module.exports = {
-    entry: { index: ['babel-polyfill', './src/index.js'] },
+    entry: { app: ['babel-polyfill', './src/app.js'] },
     output: {
         path: path.resolve(__dirname, 'public/scripts'),
         publicPath: '/public/scripts/',
-        filename: '[name].js',
+        filename: '[name].bundle.js',
     },
     module: {
         rules: [
@@ -26,10 +26,4 @@ module.exports = {
         ],
     },
     devtool: 'source-map',
-    devServer: {
-        static: {
-            directory: path.join(__dirname, 'public'),
-        },
-        open: true,
-    },
 };
