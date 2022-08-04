@@ -151,6 +151,13 @@ class Table {
 
         startingTime ??= moment();
 
+        if (numberOfDays === 7) {
+            // Making the table always begin on monday when showing 7 days
+            while (startingTime.format('ddd') !== 'Mon') {
+                startingTime.subtract(1, 'days');
+            }
+        }
+
         startingTime = startingTime
             .hours(0)
             .minutes(0)

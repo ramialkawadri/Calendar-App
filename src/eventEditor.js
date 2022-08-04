@@ -280,6 +280,8 @@ class EventEditor {
 
         this.updateEventEditorTimes();
         this.#updateFormValues();
+
+        this.titleInputEl.focus();
     }
 
     // Update the text fields values

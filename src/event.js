@@ -233,12 +233,9 @@ class Event {
                 clearInterval(interval);
                 interval = null;
             }
-
-            // If the user clicked or the event editor was already shown
-            if (hasMoved && wasEditorHidden) {
-                this.eventEditor.hideEditor();
-            } else if (!wasEditorHidden || !hasMoved) {
+            if (!wasEditorHidden) {
                 this.eventEditor.showEventEditor(this);
+                wasEditorHidden = true;
             }
         };
 
@@ -348,6 +345,13 @@ class Event {
         ['mouseup', 'touchend', 'touchcancel'].forEach((name) => {
             eventEl.addEventListener(name, endMovingEvent.bind(this));
         });
+
+        eventEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!hasMoved) {
+                this.eventEditor.showEventEditor(this);
+            }
+        });
     }
 
     #initDOM() {
@@ -388,10 +392,6 @@ class Event {
             }
 
             this.eventEls.push(eventEl);
-
-            eventEl.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
         }
 
         this.#updateDOM();
