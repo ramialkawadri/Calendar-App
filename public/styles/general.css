@@ -1,0 +1,81 @@
+/*
+- Typography
+- Font weights: 400
+- FONT SIZE SYSTEM (px)
+10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
+- SPACING SYSTEM (px)
+2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: 3px solid transparent;
+}
+
+*:focus {
+  outline-color: #002544;
+}
+
+html {
+  /* 1rem = 10px */
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  color: #212121;
+}
+
+input[type=text],
+input[type=date],
+input[type=time],
+select {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  border: 1px solid #bdbdbd;
+  border-radius: 3px;
+  transition: all 0.3s;
+}
+
+input[type=date],
+input[type=time] {
+  padding: 0.4rem;
+}
+
+select {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+.button, .button:link, .button:visited {
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 0.3s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+.button:hover, .button:link:hover, .button:visited:hover, .button:active, .button:link:active, .button:visited:active {
+  opacity: 0.9;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+}
+.button--primary, .button--primary:link, .button--primary:visited {
+  background-color: #004177;
+  color: #fff;
+}
+.button--secondary, .button--secondary:link, .button--secondary:visited {
+  background-color: #ef5b0c;
+  color: #fff;
+}
+
+/*# sourceMappingURL=general.css.map */

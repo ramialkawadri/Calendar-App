@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: { app: ['babel-polyfill', './src/app.js'] },
+    entry: { index: ['babel-polyfill', './frontend/index.js'] },
     output: {
         path: path.resolve(__dirname, 'public/scripts'),
         publicPath: '/public/scripts/',
@@ -18,10 +18,6 @@ module.exports = {
                         presets: ['@babel/preset-env'],
                     },
                 },
-            },
-            {
-                test: /\.s[ac]ss$/i,
-                use: ['style-loader', 'css-loader', 'sass-loader'],
             },
         ],
     },

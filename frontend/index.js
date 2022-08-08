@@ -1,8 +1,5 @@
 // This is the main JS file that will run first
 
-// Sass files
-import '../styles/general.scss';
-
 // Javascript files
 import Table from './table';
 import StorageHandler from './storage';

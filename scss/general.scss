@@ -8,7 +8,7 @@
 */
 
 // Variables
-@use 'utils/variables';
+@use 'utils/variables' as variables;
 
 // Default styles
 * {
@@ -101,6 +101,3 @@ select {
         color: variables.$light-text;
     }
 }
-
-@import 'style.scss';
-@import 'responsive.scss';
