@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const privateKey = 'calendar-app';
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -25,6 +28,14 @@ const userSchema = new mongoose.Schema({
         trim: true,
         minLength: 6,
     },
+    tokens: [
+        {
+            token: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
 });
 
 userSchema.pre('save', async function (next) {
@@ -49,6 +60,16 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user;
 };
 
+userSchema.methods.generateAuthToken = async function () {
+    const user = this;
+    const token = jwt.sign({ _id: user._id }, privateKey, {
+        expiresIn: '7 days',
+    });
+    user.tokens.push({ token });
+    await user.save();
+    return token;
+};
+
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = { User, privateKey };

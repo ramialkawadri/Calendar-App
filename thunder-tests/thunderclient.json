@@ -1,0 +1,81 @@
+[
+  {
+    "_id": "5a4905a6-34a2-4a1b-bf45-bac72b667825",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "3aa9b39f-3c0f-4cca-b0ac-cdc547fc4b44",
+    "name": "Create user",
+    "url": "{{url}}/createUser",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2022-08-10T12:25:44.340Z",
+    "modified": "2022-08-10T12:26:23.831Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"name\": \"Rami Alkawadri\",\n  \"email\": \"Ramikw463@uio.no\",\n  \"password\": \"thisIsMyPassword\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "048d5584-ca04-4236-b69c-1e088a4cc5ef",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "3aa9b39f-3c0f-4cca-b0ac-cdc547fc4b44",
+    "name": "Login",
+    "url": "{{url}}/login",
+    "method": "POST",
+    "sortNum": 30000,
+    "created": "2022-08-10T12:37:29.070Z",
+    "modified": "2022-08-10T12:41:04.046Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"Ramikw463@uio.no\",\n  \"password\": \"thisIsMyPassword\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "201"
+      },
+      {
+        "type": "set-env-var",
+        "custom": "json.token",
+        "action": "setto",
+        "value": "{{authToken}}"
+      }
+    ]
+  },
+  {
+    "_id": "939163b6-5232-41d4-bcbe-dc52b6051e40",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "3aa9b39f-3c0f-4cca-b0ac-cdc547fc4b44",
+    "name": "Logout",
+    "url": "{{url}}/logout",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2022-08-10T12:48:29.368Z",
+    "modified": "2022-08-10T12:50:26.101Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "11900939-30c9-4c56-bbcf-95cccd121363",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "3aa9b39f-3c0f-4cca-b0ac-cdc547fc4b44",
+    "name": "Logout all",
+    "url": "{{url}}/logoutAll",
+    "method": "POST",
+    "sortNum": 50000,
+    "created": "2022-08-10T12:56:38.354Z",
+    "modified": "2022-08-10T12:58:04.173Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  }
+]

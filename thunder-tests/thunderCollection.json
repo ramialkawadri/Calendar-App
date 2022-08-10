@@ -1,0 +1,25 @@
+[
+  {
+    "_id": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "colName": "Calendar app",
+    "created": "2022-08-10T12:25:22.785Z",
+    "sortNum": 10000,
+    "folders": [
+      {
+        "_id": "3aa9b39f-3c0f-4cca-b0ac-cdc547fc4b44",
+        "name": "User",
+        "containerId": "",
+        "created": "2022-08-10T12:25:38.356Z",
+        "sortNum": 10000
+      }
+    ],
+    "settings": {
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{authToken}}"
+      },
+      "tests": []
+    }
+  }
+]

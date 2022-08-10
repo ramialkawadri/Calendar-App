@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "f055edf1-3110-4448-8115-597530921d36",
+    "name": "dev",
+    "default": true,
+    "sortNum": 10000,
+    "created": "2022-08-10T12:22:15.922Z",
+    "modified": "2022-08-10T13:01:03.665Z",
+    "data": [
+      {
+        "name": "url",
+        "value": "http://localhost:3000"
+      },
+      {
+        "name": "authToken",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MmYzYTZlZmI1MDA0YTYyZDAwM2MyNDYiLCJpYXQiOjE2NjAxMzY0NjMsImV4cCI6MTY2MDc0MTI2M30.ThRA3QWKR7FexQGL0Dt8Lr40FLQeU7qmMZIU97dZdq0"
+      }
+    ]
+  }
+]
