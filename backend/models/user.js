@@ -47,6 +47,12 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
+userSchema.virtual('events', {
+    ref: 'Event',
+    localField: '_id',
+    foreignField: 'owner',
+});
+
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email });
     if (!user) {
@@ -68,6 +74,14 @@ userSchema.methods.generateAuthToken = async function () {
     user.tokens.push({ token });
     await user.save();
     return token;
+};
+
+userSchema.methods.toJSON = function () {
+    const userObject = this.toObject();
+    delete userObject.password;
+    delete userObject._id;
+    delete userObject.tokens;
+    return userObject;
 };
 
 const User = mongoose.model('User', userSchema);

@@ -8,15 +8,28 @@
     "method": "POST",
     "sortNum": 20000,
     "created": "2022-08-10T12:25:44.340Z",
-    "modified": "2022-08-10T12:26:23.831Z",
+    "modified": "2022-08-11T11:22:27.687Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"name\": \"Rami Alkawadri\",\n  \"email\": \"Ramikw463@uio.no\",\n  \"password\": \"thisIsMyPassword\"\n}",
+      "raw": "{\n  \"name\": \"Rami Alkawadri\",\n  \"email\": \"Ramsikw463@gmail.com\",\n  \"password\": \"thisIsMyPassword\"\n}",
       "form": []
     },
-    "tests": []
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "201"
+      },
+      {
+        "type": "set-env-var",
+        "custom": "json.token",
+        "action": "setto",
+        "value": "{{authToken}}"
+      }
+    ]
   },
   {
     "_id": "048d5584-ca04-4236-b69c-1e088a4cc5ef",
@@ -27,12 +40,12 @@
     "method": "POST",
     "sortNum": 30000,
     "created": "2022-08-10T12:37:29.070Z",
-    "modified": "2022-08-10T12:41:04.046Z",
+    "modified": "2022-08-11T11:23:09.033Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"email\": \"Ramikw463@uio.no\",\n  \"password\": \"thisIsMyPassword\"\n}",
+      "raw": "{\n  \"email\": \"Ramikw463@gmail.com\",\n  \"password\": \"thisIsMyPassword\"\n}",
       "form": []
     },
     "tests": [
@@ -76,6 +89,58 @@
     "modified": "2022-08-10T12:58:04.173Z",
     "headers": [],
     "params": [],
+    "tests": []
+  },
+  {
+    "_id": "526211f6-6abb-4cf5-8b04-81350a509c27",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
+    "name": "Create event",
+    "url": "{{url}}/createEvent",
+    "method": "POST",
+    "sortNum": 60000,
+    "created": "2022-08-11T11:02:00.333Z",
+    "modified": "2022-08-11T11:16:42.898Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"title\": \"My third event\",\n  \"description\": \"Bye\",\n  \"startTimestamp\": 231230,\n  \"endTimestamp\": 423141\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "84478ccb-51dd-480e-8802-654ba8942b71",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
+    "name": "Get user events",
+    "url": "{{url}}/getEvents",
+    "method": "GET",
+    "sortNum": 70000,
+    "created": "2022-08-11T11:05:19.029Z",
+    "modified": "2022-08-11T11:05:29.118Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "a899f1fe-2481-4040-8596-6a29239dfaff",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
+    "name": "Update event",
+    "url": "{{url}}/editEvent/62f4e5876596741b9426e40c",
+    "method": "PATCH",
+    "sortNum": 80000,
+    "created": "2022-08-11T11:15:36.324Z",
+    "modified": "2022-08-11T11:23:26.588Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"description\": \"my new description\"\n}",
+      "form": []
+    },
     "tests": []
   }
 ]

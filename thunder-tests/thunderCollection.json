@@ -11,6 +11,13 @@
         "containerId": "",
         "created": "2022-08-10T12:25:38.356Z",
         "sortNum": 10000
+      },
+      {
+        "_id": "50db6bb4-2eca-4b75-8543-47360c210022",
+        "name": "Event",
+        "containerId": "",
+        "created": "2022-08-11T10:56:35.194Z",
+        "sortNum": 20000
       }
     ],
     "settings": {

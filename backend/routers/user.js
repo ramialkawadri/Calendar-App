@@ -10,7 +10,7 @@ router.post('/createUser', async (req, res) => {
         const user = new User(req.body);
         await user.save();
         const token = await user.generateAuthToken();
-        res.status(201).send(token);
+        res.status(201).send({ token, user });
     } catch (e) {
         res.status(500).send();
     }
@@ -44,6 +44,17 @@ router.post('/logoutAll', auth, async (req, res) => {
     user.tokens = [];
     await user.save();
     res.send();
+});
+
+// Returns the events that the user has
+router.get('/getEvents', auth, async (req, res) => {
+    try {
+        const user = req.user;
+        await user.populate('events');
+        res.send(user.events);
+    } catch (e) {
+        res.status(400).send();
+    }
 });
 
 module.exports = router;
