@@ -46,15 +46,4 @@ router.post('/logoutAll', auth, async (req, res) => {
     res.send();
 });
 
-// Returns the events that the user has
-router.get('/getEvents', auth, async (req, res) => {
-    try {
-        const user = req.user;
-        await user.populate('events');
-        res.send(user.events);
-    } catch (e) {
-        res.status(400).send();
-    }
-});
-
 module.exports = router;

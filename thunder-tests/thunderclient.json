@@ -8,12 +8,12 @@
     "method": "POST",
     "sortNum": 20000,
     "created": "2022-08-10T12:25:44.340Z",
-    "modified": "2022-08-11T11:22:27.687Z",
+    "modified": "2022-08-12T17:06:14.318Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"name\": \"Rami Alkawadri\",\n  \"email\": \"Ramsikw463@gmail.com\",\n  \"password\": \"thisIsMyPassword\"\n}",
+      "raw": "{\n  \"name\": \"Rami Alkawadri\",\n  \"email\": \"Ramsikw4w63@gmail.com\",\n  \"password\": \"thisIsMyPassword\"\n}",
       "form": []
     },
     "tests": [
@@ -40,12 +40,12 @@
     "method": "POST",
     "sortNum": 30000,
     "created": "2022-08-10T12:37:29.070Z",
-    "modified": "2022-08-11T11:23:09.033Z",
+    "modified": "2022-08-12T18:20:42.431Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"email\": \"Ramikw463@gmail.com\",\n  \"password\": \"thisIsMyPassword\"\n}",
+      "raw": "{\n  \"email\": \"Ramsikw4w63@gmail.com\",\n  \"password\": \"thisIsMyPassword\"\n}",
       "form": []
     },
     "tests": [
@@ -96,16 +96,16 @@
     "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
     "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
     "name": "Create event",
-    "url": "{{url}}/createEvent",
+    "url": "{{url}}/event",
     "method": "POST",
     "sortNum": 60000,
     "created": "2022-08-11T11:02:00.333Z",
-    "modified": "2022-08-11T11:16:42.898Z",
+    "modified": "2022-08-12T17:05:08.197Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"title\": \"My third event\",\n  \"description\": \"Bye\",\n  \"startTimestamp\": 231230,\n  \"endTimestamp\": 423141\n}",
+      "raw": "{\n  \"title\": \"My fourth event\",\n  \"description\": \"Bye\",\n  \"startTimestamp\": 231230,\n  \"endTimestamp\": 423141\n}",
       "form": []
     },
     "tests": []
@@ -115,11 +115,11 @@
     "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
     "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
     "name": "Get user events",
-    "url": "{{url}}/getEvents",
+    "url": "{{url}}/event",
     "method": "GET",
     "sortNum": 70000,
     "created": "2022-08-11T11:05:19.029Z",
-    "modified": "2022-08-11T11:05:29.118Z",
+    "modified": "2022-08-12T17:05:13.306Z",
     "headers": [],
     "params": [],
     "tests": []
@@ -129,18 +129,32 @@
     "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
     "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
     "name": "Update event",
-    "url": "{{url}}/editEvent/62f4e5876596741b9426e40c",
+    "url": "{{url}}/event/62f6884434f7dedf689f4c44",
     "method": "PATCH",
     "sortNum": 80000,
     "created": "2022-08-11T11:15:36.324Z",
-    "modified": "2022-08-11T11:23:26.588Z",
+    "modified": "2022-08-12T17:06:19.537Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"description\": \"my new description\"\n}",
+      "raw": "{\n  \"description\": \"my new description 4x\"\n}",
       "form": []
     },
+    "tests": []
+  },
+  {
+    "_id": "c7d4dbd1-604e-48a3-9788-b4da66f64d34",
+    "colId": "9501f610-90de-488d-9ba6-da813cbbda3c",
+    "containerId": "50db6bb4-2eca-4b75-8543-47360c210022",
+    "name": "Delete event",
+    "url": "{{url}}/event/62f6884434f7dedf689f4c44",
+    "method": "DELETE",
+    "sortNum": 90000,
+    "created": "2022-08-12T17:08:31.826Z",
+    "modified": "2022-08-12T17:10:11.172Z",
+    "headers": [],
+    "params": [],
     "tests": []
   }
 ]

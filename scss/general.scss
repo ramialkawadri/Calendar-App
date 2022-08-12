@@ -36,6 +36,8 @@ body {
 input[type='text'],
 input[type='date'],
 input[type='time'],
+input[type='email'],
+input[type='password'],
 select {
     padding: 0.8rem 1.2rem;
     font-size: 1.2rem;
@@ -57,7 +59,7 @@ select {
 
 // General classes
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .button {
@@ -65,7 +67,7 @@ select {
     &:link,
     &:visited {
         padding: 0.8rem 1.6rem;
-        border: none;
+        border: 2px solid transparent;
         border-radius: 3px;
         cursor: pointer;
         background-color: transparent;
@@ -84,7 +86,7 @@ select {
     &:link:active,
     &:visited:active {
         opacity: 0.9;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     }
 
     &--primary,
@@ -92,6 +94,14 @@ select {
     &--primary:visited {
         background-color: variables.$primary-color;
         color: variables.$light-text;
+    }
+
+    &--primary-border,
+    &--primary-border:link,
+    &--primary-border:visited {
+        color: variables.$primary-text-color;
+        background-color: variables.$light-text;
+        border: 2px solid variables.$primary-color;
     }
 
     &--secondary,

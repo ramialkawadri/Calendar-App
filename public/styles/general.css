@@ -30,6 +30,8 @@ body {
 input[type=text],
 input[type=date],
 input[type=time],
+input[type=email],
+input[type=password],
 select {
   padding: 0.8rem 1.2rem;
   font-size: 1.2rem;
@@ -50,12 +52,12 @@ select {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .button, .button:link, .button:visited {
   padding: 0.8rem 1.6rem;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 3px;
   cursor: pointer;
   background-color: transparent;
@@ -67,11 +69,16 @@ select {
 }
 .button:hover, .button:link:hover, .button:visited:hover, .button:active, .button:link:active, .button:visited:active {
   opacity: 0.9;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
 .button--primary, .button--primary:link, .button--primary:visited {
   background-color: #004177;
   color: #fff;
+}
+.button--primary-border, .button--primary-border:link, .button--primary-border:visited {
+  color: #212121;
+  background-color: #fff;
+  border: 2px solid #004177;
 }
 .button--secondary, .button--secondary:link, .button--secondary:visited {
   background-color: #ef5b0c;

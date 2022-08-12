@@ -17,7 +17,7 @@ const checkValidOperation = function (body) {
 };
 
 // Creating an event
-router.post('/createEvent', auth, async (req, res) => {
+router.post('/event', auth, async (req, res) => {
     if (!checkValidOperation(req.body)) {
         res.status(400).send();
         return;
@@ -33,7 +33,7 @@ router.post('/createEvent', auth, async (req, res) => {
 });
 
 // Editing an event
-router.patch('/editEvent/:id', auth, async (req, res) => {
+router.patch('/event/:id', auth, async (req, res) => {
     if (!checkValidOperation(req.body)) {
         res.status(400).send();
         return;
@@ -58,5 +58,29 @@ router.patch('/editEvent/:id', auth, async (req, res) => {
 });
 
 // Removing an event
+router.delete('/event/:id', auth, async (req, res) => {
+    try {
+        const event = await Event.findOne({
+            _id: req.params.id,
+            owner: req.user._id,
+        });
+        if (!event) throw new Error();
+        await event.remove();
+        res.send();
+    } catch (e) {
+        res.status(400).send();
+    }
+});
+
+// Returns the events that the user has
+router.get('/event', auth, async (req, res) => {
+    try {
+        const user = req.user;
+        await user.populate('events');
+        res.send(user.events);
+    } catch (e) {
+        res.status(400).send();
+    }
+});
 
 module.exports = router;

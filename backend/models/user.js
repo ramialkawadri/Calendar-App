@@ -3,7 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const privateKey = 'calendar-app';
+const privateKey = process.env.JWT_KEY;
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -81,6 +81,7 @@ userSchema.methods.toJSON = function () {
     delete userObject.password;
     delete userObject._id;
     delete userObject.tokens;
+    delete userObject.__v;
     return userObject;
 };
 

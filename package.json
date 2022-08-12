@@ -4,11 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev-server": "concurrently \"npm run live-server\" \"npm run webpack-watch\" \"npm run sass-watch\" \"npm run express-watch\"",
-        "live-server": "live-server ./public/",
+        "dev-server": "concurrently \"npm run webpack-watch\" \"npm run sass-watch\" \"npm run express-watch\"",
         "webpack-watch": "webpack --mode development --watch",
         "sass-watch": "sass scss/:public/styles/ --watch",
-        "express-watch": "nodemon backend/app.js -e js",
+        "express-watch": "env-cmd -f config/dev.env nodemon backend/app.js -e js",
         "sass-build": "sass scss/:public/styles/",
         "webpack-build": "webpack --mode production",
         "build": "npm run webpack-build && npm run sass-build",
@@ -23,7 +22,7 @@
         "babel-loader": "^8.2.5",
         "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.7.0",
-        "bcrypt": "^5.0.1",
+        "bcryptjs": "^2.4.3",
         "express": "^4.18.1",
         "jsonwebtoken": "^8.5.1",
         "moment": "^2.29.4",
@@ -36,7 +35,7 @@
     },
     "devDependencies": {
         "concurrently": "^7.3.0",
-        "live-server": "^1.2.2",
+        "env-cmd": "^10.1.0",
         "nodemon": "^2.0.19"
     }
 }

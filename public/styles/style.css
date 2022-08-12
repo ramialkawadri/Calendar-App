@@ -20,6 +20,10 @@ nav {
   padding: 1.6rem 3.2rem;
   font-size: 1.6rem;
   border-bottom: 1px solid rgba(189, 189, 189, 0.6);
+  justify-content: space-between;
+}
+nav,
+nav div {
   display: flex;
   align-items: center;
   gap: 3.2rem;
@@ -214,6 +218,47 @@ nav .nav__movement .button {
   z-index: 2;
   cursor: s-resize;
   touch-action: none;
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.overlay > * {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.overlay > * .form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.6rem;
+}
+.overlay > * .form-header .close-button {
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.overlay > * .form-header .close-button:hover, .overlay > * .form-header .close-button:active {
+  opacity: 0.8;
+}
+.overlay > * > div:not(:first-child) {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  column-gap: 1.2rem;
+  align-items: center;
+  font-size: 1.2rem;
 }
 
 /*# sourceMappingURL=style.css.map */

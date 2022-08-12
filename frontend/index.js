@@ -4,6 +4,7 @@
 import Table from './table';
 import StorageHandler from './storage';
 import moment from 'moment';
+require('./auth');
 
 const storageHandler = new StorageHandler();
 const calendar = new Table(

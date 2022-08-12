@@ -29,31 +29,117 @@
     </head>
     <body>
         <nav>
-            <p class="nav__logo">
-                <i class="nav__logo_image fa-solid fa-calendar"></i>
-                <span class="nav__logo__text">Calendar</span>
-            </p>
-
-            <button class="button button--primary nav__today">Today</button>
-
-            <div class="nav__movement">
-                <button class="button nav__movement_left">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button class="button nav__movement_right">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+            <div class="left">
+                <p class="nav__logo">
+                    <i class="nav__logo_image fa-solid fa-calendar"></i>
+                    <span class="nav__logo__text">Calendar</span>
+                </p>
+                <button class="button button--primary nav__today">Today</button>
+                <div class="nav__movement">
+                    <button class="button nav__movement_left">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="button nav__movement_right">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <p class="nav__current-date"></p>
+                <select class="nav__number-of-days">
+                    <option value="7">Week</option>
+                    <option value="4">4 days</option>
+                    <option value="1">1 day</option>
+                </select>
             </div>
 
-            <p class="nav__current-date"></p>
-            <select class="nav__number-of-days">
-                <option value="7">Week</option>
-                <option value="4">4 days</option>
-                <option value="1">1 day</option>
-            </select>
+            <div class="login">
+                <button class="button button--primary-border register-button">
+                    Register
+                </button>
+                <button class="button button--primary login-button">
+                    Login
+                </button>
+                <button class="button button--primary logout-button hidden">
+                    Logout
+                </button>
+            </div>
         </nav>
 
         <div class="calendar-table" id="calendar-table" class="week"></div>
+
+        <div class="overlay register-overlay hidden">
+            <form action="/createUser" method="post" class="register-form">
+                <div class="form-header">
+                    <h3>Register a new user</h3>
+                    <i class="fa-solid fa-xmark close-button" role="button"></i>
+                </div>
+                <div>
+                    <label for="register-name">Name:</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="register-name"
+                        placeholder="Enter your name"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label for="register-email">Email:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="register-email"
+                        placeholder="Enter your email"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label for="register-password">Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="register-password"
+                        placeholder="Enter your password"
+                        required
+                    />
+                </div>
+
+                <button class="button button--primary">Register</button>
+            </form>
+        </div>
+
+        <div class="overlay login-overlay hidden">
+            <form action="/login" method="post" class="login-form">
+                <div class="form-header">
+                    <h3>Login</h3>
+                    <i class="fa-solid fa-xmark close-button" role="button"></i>
+                </div>
+                <div>
+                    <label for="login-email">Email:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="login-email"
+                        placeholder="Enter your email"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label for="login-password">Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="login-password"
+                        placeholder="Enter your password"
+                        required
+                    />
+                </div>
+
+                <button class="button button--primary">Login</button>
+            </form>
+        </div>
 
         <!-- The CSS is also included in the JS file -->
         <script src="./scripts/index.bundle.js"></script>
