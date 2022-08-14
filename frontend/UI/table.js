@@ -206,14 +206,14 @@ class Table {
     }
 
     // Show all saved events that fits into the table
-    #showSavedEvents() {
+    async #showSavedEvents() {
         const startTimestamp = this.currentTimestamp;
         const endTimestamp = addDaysToTimeStamp(
             this.currentTimestamp,
             this.numberOfDaysShown
         );
 
-        const events = this.storageHandler.getAllInRange(
+        const events = await this.storageHandler.getAllInRange(
             startTimestamp,
             endTimestamp
         );
@@ -227,7 +227,7 @@ class Table {
                 e.title,
                 e.description,
                 false,
-                e.id
+                e._id
             );
         });
     }

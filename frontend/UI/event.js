@@ -1,5 +1,4 @@
 import { getElementHeightFromCSS, windowMousePosition } from './utility';
-import { v4 as uuidv4 } from 'uuid';
 import {
     addDaysToTimeStamp,
     addMinutesToTimestamp,
@@ -40,9 +39,18 @@ class Event {
         // A placeholder event is an event that is not yet added to the table but
         // used to help creating a new event
         this.isPlaceholder = isPlaceholder;
-        this.id = id ? id : uuidv4();
-
+        if (id) {
+            this.id = id;
+        } else this.#generateID();
         this.#initDOM();
+    }
+
+    // Generates an ID for the event
+    async #generateID() {
+        const response = await fetch('/generateID');
+        let id = await response.text();
+        id = id.replaceAll('"', '');
+        this.id = id;
     }
 
     // Calculates the event height from the time, 1 hour is equal 1 cell height,

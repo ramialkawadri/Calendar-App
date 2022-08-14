@@ -1,4 +1,5 @@
 const express = require('express');
+const { default: mongoose } = require('mongoose');
 const { auth } = require('../middleware/auth');
 const Event = require('../models/event');
 
@@ -72,15 +73,35 @@ router.delete('/event/:id', auth, async (req, res) => {
     }
 });
 
-// Returns the events that the user has
+// Returns the events that the user has, you can add the following queries:
+// start=value, end=value
 router.get('/event', auth, async (req, res) => {
     try {
         const user = req.user;
-        await user.populate('events');
+        const match = {};
+        if (req.query.start)
+            match.startTimestamp = {
+                $gte: req.query.start,
+            };
+        if (req.query.end)
+            match.endTimestamp = {
+                $lte: req.query.end,
+            };
+
+        await user.populate({
+            path: 'events',
+            match,
+        });
         res.send(user.events);
     } catch (e) {
         res.status(400).send();
     }
+});
+
+// Returns an object id
+router.get('/generateID', (req, res) => {
+    const id = new mongoose.Types.ObjectId();
+    res.send(id);
 });
 
 module.exports = router;

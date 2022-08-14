@@ -1,5 +1,6 @@
 const express = require('express');
-const { User } = require('../models/user');
+const jwt = require('jsonwebtoken');
+const { User, privateKey } = require('../models/user');
 const { auth } = require('../middleware/auth');
 
 const router = new express.Router();
@@ -26,6 +27,20 @@ router.post('/login', async (req, res) => {
         if (!user) throw new Error();
         const token = await user.generateAuthToken();
         res.status(201).send({ user, token });
+    } catch (e) {
+        res.status(400).send();
+    }
+});
+
+// Checks if a token is valid
+router.post('/token', async (req, res) => {
+    try {
+        const token = req.body.token;
+        const decoded = jwt.verify(token, privateKey);
+        const user = User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+        if (!user) res.status(400).send();
+        else res.send();
     } catch (e) {
         res.status(400).send();
     }

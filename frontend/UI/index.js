@@ -1,10 +1,10 @@
-// This is the main JS file that will run first
+// This is the main JS file that will import and work with the UI
 
 // Javascript files
 import Table from './table';
 import StorageHandler from './storage';
 import moment from 'moment';
-require('./auth');
+import {} from '../authentication/auth';
 
 const storageHandler = new StorageHandler();
 const calendar = new Table(
@@ -48,5 +48,3 @@ document
     });
 
 export { getCalendar };
-
-console.log('working');

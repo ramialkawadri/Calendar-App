@@ -31,7 +31,6 @@ const eventSchema = new mongoose.Schema(
 
 eventSchema.methods.toJSON = function () {
     const eventObject = this.toObject();
-    delete eventObject._id;
     delete eventObject.__v;
     delete eventObject.owner;
     return eventObject;
