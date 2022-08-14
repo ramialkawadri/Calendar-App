@@ -12,6 +12,7 @@ const checkValidOperation = function (body) {
         'description',
         'startTimestamp',
         'endTimestamp',
+        '_id',
     ];
     const bodyKeys = Object.keys(body);
     return bodyKeys.every((key) => validOperations.includes(key));

@@ -41,16 +41,8 @@ class Event {
         this.isPlaceholder = isPlaceholder;
         if (id) {
             this.id = id;
-        } else this.#generateID();
-        this.#initDOM();
-    }
-
-    // Generates an ID for the event
-    async #generateID() {
-        const response = await fetch('/generateID');
-        let id = await response.text();
-        id = id.replaceAll('"', '');
-        this.id = id;
+            this.#initDOM();
+        }
     }
 
     // Calculates the event height from the time, 1 hour is equal 1 cell height,
@@ -168,6 +160,7 @@ class Event {
                 e.clientY - eventEl.getBoundingClientRect().top;
             mousePosition.currentY = mousePosition.lastUpdatedY;
             resizeEventStart();
+            document.body.addEventListener('mousemove', mouseMoveFunction);
         });
 
         resizeBoxEl.addEventListener('touchstart', (e) => {
@@ -176,22 +169,31 @@ class Event {
                 e.touches[0].clientY - eventEl.getBoundingClientRect().top;
             mousePosition.currentY = mousePosition.lastUpdatedY;
             resizeEventStart();
+            document.body.addEventListener('touchmove', touchMoveFunction);
         });
 
         // Updates the mouse position
-        resizeBoxEl.addEventListener('mousemove', (e) => {
+        const mouseMoveFunction = (e) => {
             mousePosition.currentY =
                 e.clientY - eventEl.getBoundingClientRect().top;
-        });
-        resizeBoxEl.addEventListener('touchmove', (e) => {
+        };
+        const touchMoveFunction = (e) => {
             mousePosition.currentY =
                 e.touches[0].clientY - eventEl.getBoundingClientRect().top;
-        });
+        };
 
         // Stops the resize function
         const stopInterval = () => {
             resizeBoxEl.style.height = `${initialResizeElementHeight}px`;
             if (interval) {
+                document.body.removeEventListener(
+                    'mousemove',
+                    mouseMoveFunction
+                );
+                document.body.removeEventListener(
+                    'touchmove',
+                    touchMoveFunction
+                );
                 clearInterval(interval);
                 interval = null;
             }
@@ -201,13 +203,7 @@ class Event {
             }
         };
 
-        [
-            'mouseup',
-            'mouseleave',
-            'mouseout',
-            'touchend',
-            'touchcancel',
-        ].forEach((name) => {
+        ['mouseup', 'touchend', 'touchcancel', 'click'].forEach((name) => {
             resizeBoxEl.addEventListener(name, stopInterval.bind(this));
         });
     }
@@ -358,6 +354,7 @@ class Event {
             e.stopPropagation();
             if (!hasMoved) {
                 this.eventEditor.showEventEditor(this);
+                this.pushToFront();
             }
         });
     }
@@ -512,6 +509,18 @@ class Event {
 
     removeDOMElement() {
         this.eventEls.forEach((el) => el.remove());
+    }
+
+    pushToFront() {
+        this.eventEls.forEach((el) => {
+            el.style.zIndex = '2';
+        });
+    }
+
+    pushToNormalPosition() {
+        this.eventEls.forEach((el) => {
+            el.style.zIndex = '1';
+        });
     }
 }
 

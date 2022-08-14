@@ -1,6 +1,4 @@
 // This file handles authentication
-
-import { authUpdateUI } from './authUI';
 import { getCalendar } from '../UI/index';
 
 const registerOverlay = document.querySelector('.register-overlay');
@@ -9,6 +7,28 @@ const loginOverlay = document.querySelector('.login-overlay');
 const registerButton = document.querySelector('.register-button');
 const loginButton = document.querySelector('.login-button');
 const logoutButton = document.querySelector('.logout-button');
+
+// Update the UI for login
+const login = () => {
+    registerButton.classList.add('hidden');
+    loginButton.classList.add('hidden');
+    logoutButton.classList.remove('hidden');
+};
+
+// Update the UI for logout
+const logout = () => {
+    registerButton.classList.remove('hidden');
+    loginButton.classList.remove('hidden');
+    logoutButton.classList.add('hidden');
+    localStorage.removeItem('token');
+};
+
+// Updates the interface when logging in / out
+const authUpdateUI = async () => {
+    const loggedIn = await isLoggedIn();
+    if (loggedIn) login();
+    else logout();
+};
 
 // Showing the forms
 registerButton.addEventListener('click', () => {
@@ -88,6 +108,8 @@ loginOverlay.querySelector('form').addEventListener('submit', async (e) => {
         hideLoginOverlay();
         alert('Login successful');
         authUpdateUI();
+
+        getCalendar().generateEmptyTable();
     } else {
         alert('Error in login, try again.');
     }

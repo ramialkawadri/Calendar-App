@@ -220,6 +220,7 @@ class EventEditor {
     }
 
     hideEditor() {
+        if (this.selectedEvent) this.selectedEvent.pushToNormalPosition();
         this.hideEditorVisually();
         this.#clearInputs();
         this.#removePlaceholder();

@@ -115,7 +115,7 @@ class Table {
                     tableRow.appendChild(tableCell);
 
                     // Click event to add a new calendar event
-                    tableCell.addEventListener('click', (e) => {
+                    tableCell.addEventListener('click', async (e) => {
                         // Calculating where in the cell the user clicked, to know how far
                         // we need to show the placeholder
                         const minutePercentage = calculateMinutePercentage(
@@ -124,17 +124,30 @@ class Table {
                         );
 
                         // The timestamp for the appropriate day, hour, and minute
-                        const timestamp = moment(time)
+                        const startTimestamp = moment(time)
                             .add(i - 1, 'days')
                             .add(j, 'hour')
                             .minutes(minutePercentage * 60)
                             .valueOf();
 
+                        const endTimestamp = moment(startTimestamp)
+                            .add(1, 'hour')
+                            .valueOf();
+
+                        const response = await fetch('/generateID');
+                        let id = await response.text();
+                        id = id.replaceAll('"', '');
+
                         const event = new Event(
                             this,
                             this.eventEditor,
                             this.storageHandler,
-                            timestamp
+                            startTimestamp,
+                            endTimestamp,
+                            '',
+                            '',
+                            true,
+                            id
                         );
                         this.eventEditor.showEventEditor(event);
                     });
@@ -145,7 +158,10 @@ class Table {
     }
 
     // Generate an empty table and views it
-    generateEmptyTable(startingTime = null, numberOfDays = 7) {
+    async generateEmptyTable(startingTime = null, numberOfDays = 7) {
+        this.tableHeader.innerHTML = '';
+        this.tableBody.innerHTML = '';
+
         // This variable indicates if we should scroll to the current time of the day
         const scrollToCurrentTime = startingTime === null;
 
@@ -191,7 +207,7 @@ class Table {
         this.tableBody.innerHTML = '';
         this.#generateTableBody(startingTime, numberOfDays);
 
-        this.#showSavedEvents();
+        await this.#showSavedEvents();
 
         if (scrollToCurrentTime) this.#scrollToCurrentTime();
     }

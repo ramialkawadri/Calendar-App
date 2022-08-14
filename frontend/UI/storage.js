@@ -5,7 +5,7 @@ import { getCalendar } from './index';
 class StorageHandler {
     // Create an event and saves it
     async addEvent(event) {
-        if (isLoggedIn()) {
+        if (await isLoggedIn()) {
             await fetch('/event', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -28,26 +28,40 @@ class StorageHandler {
     }
 
     async updateEvent(event) {
-        if (isLoggedIn()) {
-            // await fetch('');
+        if (await isLoggedIn()) {
+            await fetch(`/event/${event.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    title: event.title,
+                    description: event.description,
+                    startTimestamp: event.startTimestamp,
+                    endTimestamp: event.endTimestamp,
+                    _id: event.id,
+                }),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem('token'),
+                },
+            });
+        } else {
+            alert('Please login!');
+            getCalendar().generateEmptyTable();
         }
-
-        // const eventObj = this.#findEventById(event);
-        // if (eventObj) {
-        //     eventObj.title = event.title;
-        //     eventObj.description = event.description;
-        //     eventObj.startTimestamp = event.startTimestamp;
-        //     eventObj.endTimestamp = event.endTimestamp;
-        //     this.#saveEvents();
-        // }
     }
 
-    deleteEvent(event) {
-        // const eventIndex = this.#findEventIndexById(event);
-        // if (eventIndex >= 0) {
-        //     this.events.splice(eventIndex, 1);
-        //     this.#saveEvents();
-        // }
+    async deleteEvent(event) {
+        if (await isLoggedIn()) {
+            await fetch(`/event/${event.id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: localStorage.getItem('token'),
+                },
+            });
+        } else {
+            alert('Please login!');
+            getCalendar().generateEmptyTable();
+        }
     }
 
     // Returns all saved events between two time stamps
